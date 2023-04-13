@@ -20,3 +20,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('core.urls', namespace='core')),
 ]
+
+admin.site.site_header = 'Admin Dashboard'
+admin.site.site_title = 'Admin Dashboard'

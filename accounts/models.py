@@ -14,4 +14,5 @@ class User(AbstractUser):
     
     class Meta:
         verbose_name_plural = 'Users'
+        db_table = 'users'
         

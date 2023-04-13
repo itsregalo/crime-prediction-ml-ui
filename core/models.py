@@ -28,5 +28,7 @@ class Crime(models.Model):
         return self.case_number
     
     class Meta:
-        managed = False
-        db_table = 'crime'
+        db_table = 'crime_records'
+        verbose_name_plural = 'Crime Records'
+        ordering = ('date',)
+
