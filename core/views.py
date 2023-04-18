@@ -4,9 +4,17 @@ from tablib import Dataset
 from .resources import CrimeResource
 from django.contrib.auth.decorators import login_required
 
+from .models import Crime
+
 @login_required
 def IndexView(request):
-    return render(request, 'index.html')
+    data_count = Crime.objects.count()
+    latest_crimes = Crime.objects.order_by('-date')[:5]
+    context = {
+        'data_count': data_count,
+        'latest_crimes': latest_crimes,
+    }
+    return render(request, 'index.html', context)
 
 def import_data(request):
     if request.method == 'POST':

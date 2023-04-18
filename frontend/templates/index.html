@@ -1,8 +1,9 @@
 {% extends 'base.html' %}
+{% load static %}
 
 
 {% block title %}
-    
+    Home
 {% endblock title %}
 
 
@@ -18,8 +19,8 @@
 						<div class="card-body">
 							<div class="d-flex align-items-center">
 								<div>
-									<p class="mb-0 text-secondary">Total Orders</p>
-									<h4 class="my-1 text-info">4805</h4>
+									<p class="mb-0 text-secondary">Total Crimes</p>
+									<h4 class="my-1 text-info">{{ data_count }}</h4>
 									<p class="mb-0 font-13">+2.5% from last week</p>
 								</div>
 								<div class="widgets-icons-2 rounded-circle bg-gradient-blues text-white ms-auto"><i class='bx bxs-cart'></i>
@@ -197,94 +198,7 @@
 							</div>
 						</div>
 					</div>
-                         <div class="card-body">
-						 <div class="table-responsive">
-						   <table class="table align-middle mb-0">
-							<thead class="table-light">
-							 <tr>
-							   <th>Product</th>
-							   <th>Photo</th>
-							   <th>Product ID</th>
-							   <th>Status</th>
-							   <th>Amount</th>
-							   <th>Date</th>
-							   <th>Shipping</th>
-							 </tr>
-							 </thead>
-							 <tbody><tr>
-							  <td>Iphone 5</td>
-							  <td><img src="{% static 'assets/images/products/01.png' %}" class="product-img-2" alt="product img"></td>
-							  <td>#9405822</td>
-							  <td><span class="badge bg-gradient-quepal text-white shadow-sm w-100">Paid</span></td>
-							  <td>$1250.00</td>
-							  <td>03 Feb 2020</td>
-							  <td><div class="progress" style="height: 6px;">
-									<div class="progress-bar bg-gradient-quepal" role="progressbar" style="width: 100%"></div>
-								  </div></td>
-							 </tr>
-		  
-							 <tr>
-							  <td>Earphone GL</td>
-							  <td><img src="{% static 'assets/images/products/02.png' %}" class="product-img-2" alt="product img"></td>
-							  <td>#8304620</td>
-							  <td><span class="badge bg-gradient-blooker text-white shadow-sm w-100">Pending</span></td>
-							  <td>$1500.00</td>
-							  <td>05 Feb 2020</td>
-							  <td><div class="progress" style="height: 6px;">
-									<div class="progress-bar bg-gradient-blooker" role="progressbar" style="width: 60%"></div>
-								  </div></td>
-							 </tr>
-		  
-							 <tr>
-							  <td>HD Hand Camera</td>
-							  <td><img src="{% static 'assets/images/products/03.png' %}" class="product-img-2" alt="product img"></td>
-							  <td>#4736890</td>
-							  <td><span class="badge bg-gradient-bloody text-white shadow-sm w-100">Failed</span></td>
-							  <td>$1400.00</td>
-							  <td>06 Feb 2020</td>
-							  <td><div class="progress" style="height: 6px;">
-									<div class="progress-bar bg-gradient-bloody" role="progressbar" style="width: 70%"></div>
-								  </div></td>
-							 </tr>
-		  
-							 <tr>
-							  <td>Clasic Shoes</td>
-							  <td><img src="{% static 'assets/images/products/04.png' %}" class="product-img-2" alt="product img"></td>
-							  <td>#8543765</td>
-							  <td><span class="badge bg-gradient-quepal text-white shadow-sm w-100">Paid</span></td>
-							  <td>$1200.00</td>
-							  <td>14 Feb 2020</td>
-							  <td><div class="progress" style="height: 6px;">
-									<div class="progress-bar bg-gradient-quepal" role="progressbar" style="width: 100%"></div>
-								  </div></td>
-							 </tr>
-							 <tr>
-							  <td>Sitting Chair</td>
-							  <td><img src="{% static 'assets/images/products/06.png' %}" class="product-img-2" alt="product img"></td>
-							  <td>#9629240</td>
-							  <td><span class="badge bg-gradient-blooker text-white shadow-sm w-100">Pending</span></td>
-							  <td>$1500.00</td>
-							  <td>18 Feb 2020</td>
-							  <td><div class="progress" style="height: 6px;">
-									<div class="progress-bar bg-gradient-blooker" role="progressbar" style="width: 60%"></div>
-								  </div></td>
-							 </tr>
-							 <tr>
-							  <td>Hand Watch</td>
-							  <td><img src="{% static 'assets/images/products/05.png' %}" class="product-img-2" alt="product img"></td>
-							  <td>#8506790</td>
-							  <td><span class="badge bg-gradient-bloody text-white shadow-sm w-100">Failed</span></td>
-							  <td>$1800.00</td>
-							  <td>21 Feb 2020</td>
-							  <td><div class="progress" style="height: 6px;">
-									<div class="progress-bar bg-gradient-bloody" role="progressbar" style="width: 40%"></div>
-								  </div></td>
-							 </tr>
-						    </tbody>
-						  </table>
-						  </div>
-						 </div>
-					</div>
+                        
 
 
 					<div class="row">
@@ -521,7 +435,54 @@
 							</div>
 						  </div>
 					 </div><!--end row-->
+			</div>
 
+			<div class="card">
+				<div class="card-body">
+					<div class="table-responsive">
+						<div id="example2_wrapper" class="dataTables_wrapper dt-bootstrap5"><div class="row"><div class="col-sm-12 col-md-6"><div class="dt-buttons btn-group">      <button class="btn btn-outline-secondary buttons-copy buttons-html5" tabindex="0" aria-controls="example2" type="button"><span>Copy</span></button> <button class="btn btn-outline-secondary buttons-excel buttons-html5" tabindex="0" aria-controls="example2" type="button"><span>Excel</span></button> <button class="btn btn-outline-secondary buttons-pdf buttons-html5" tabindex="0" aria-controls="example2" type="button"><span>PDF</span></button> <button class="btn btn-outline-secondary buttons-print" tabindex="0" aria-controls="example2" type="button"><span>Print</span></button> </div></div><div class="col-sm-12 col-md-6"><div id="example2_filter" class="dataTables_filter"><label>Search:<input type="search" class="form-control form-control-sm" placeholder="" aria-controls="example2"></label></div></div></div><div class="row"><div class="col-sm-12"><table id="example2" class="table table-striped table-bordered dataTable" role="grid" aria-describedby="example2_info">
+							<thead>
+								<tr role="row">
+									<th class="sorting_asc" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-sort="ascending"
+										aria-label="Name: activate to sort column descending" style="width: 269.797px;">Case Number</th>
+									<th class="sorting" tabindex="0" aria-controls="example2" rowspan="1" colspan="1"
+										aria-label="Position: activate to sort column ascending" style="width: 430.672px;">Date</th>
+									<th class="sorting" tabindex="0" aria-controls="example2" rowspan="1" colspan="1"
+										aria-label="Office: activate to sort column ascending" style="width: 198.75px;">Block</th>
+									<th class="sorting" tabindex="0" aria-controls="example2" rowspan="1" colspan="1"
+										aria-label="Age: activate to sort column ascending" style="width: 100.531px;">IUCR</th>
+									<th class="sorting" tabindex="0" aria-controls="example2" rowspan="1" colspan="1"
+										aria-label="Start date: activate to sort column ascending" style="width: 187px;">Primary Type</th>
+									<th class="sorting" tabindex="0" aria-controls="example2" rowspan="1" colspan="1"
+										aria-label="Salary: activate to sort column ascending" style="width: 154.25px;">Arrest</th>
+								</tr>
+							</thead>
+							<tbody>
+							
+							
+							{% for crime in latest_crimes %}
+							
+							{% if crime.id|divisibleby:2 %}
+							<tr role="row" class="odd">
+							{% else %}
+							<tr role="row" class="even">
+							{% endif %}
+								<td class="sorting_1">{{crime.case_number}}</td>
+								<td>{{crime.date}}</td>
+								<td>{{crime.block}}</td>
+								<td>{{crime.iucr}}</td>
+								<td>{{crime.primary_type}}</td>
+								<td>{{crime.arrest}}</td>
+							</tr>
+							{% endfor %}
+								
+							</tbody>
+							<tfoot>
+								<tr><th rowspan="1" colspan="1">Name</th><th rowspan="1" colspan="1">Position</th><th rowspan="1" colspan="1">Office</th><th rowspan="1" colspan="1">Age</th><th rowspan="1" colspan="1">Start date</th><th rowspan="1" colspan="1">Salary</th></tr>
+							</tfoot>
+						</table></div></div><div class="row"><div class="col-sm-12 col-md-5"><div class="dataTables_info" id="example2_info" role="status" aria-live="polite">Showing 1 to 10 of 57 entries</div></div><div class="col-sm-12 col-md-7"><div class="dataTables_paginate paging_simple_numbers" id="example2_paginate"><ul class="pagination"><li class="paginate_button page-item previous disabled" id="example2_previous"><a href="#" aria-controls="example2" data-dt-idx="0" tabindex="0" class="page-link">Prev</a></li><li class="paginate_button page-item active"><a href="#" aria-controls="example2" data-dt-idx="1" tabindex="0" class="page-link">1</a></li><li class="paginate_button page-item "><a href="#" aria-controls="example2" data-dt-idx="2" tabindex="0" class="page-link">2</a></li><li class="paginate_button page-item "><a href="#" aria-controls="example2" data-dt-idx="3" tabindex="0" class="page-link">3</a></li><li class="paginate_button page-item "><a href="#" aria-controls="example2" data-dt-idx="4" tabindex="0" class="page-link">4</a></li><li class="paginate_button page-item "><a href="#" aria-controls="example2" data-dt-idx="5" tabindex="0" class="page-link">5</a></li><li class="paginate_button page-item "><a href="#" aria-controls="example2" data-dt-idx="6" tabindex="0" class="page-link">6</a></li><li class="paginate_button page-item next" id="example2_next"><a href="#" aria-controls="example2" data-dt-idx="7" tabindex="0" class="page-link">Next</a></li></ul></div></div></div></div>
+					</div>
+				</div>
 			</div>
 		</div>
 		<!--end page wrapper -->
