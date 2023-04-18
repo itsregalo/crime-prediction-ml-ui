@@ -2,6 +2,11 @@ from django.shortcuts import render
 from django.contrib import messages
 from tablib import Dataset
 from .resources import CrimeResource
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def IndexView(request):
+    return render(request, 'index.html')
 
 def import_data(request):
     if request.method == 'POST':
