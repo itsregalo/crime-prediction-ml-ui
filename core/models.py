@@ -3,7 +3,7 @@ from django.db import models
 class Crime(models.Model):
     id = models.IntegerField(primary_key=True)
     case_number = models.CharField(max_length=20)
-    date = models.DateTimeField()
+    date = models.CharField(max_length=50)
     block = models.CharField(max_length=50)
     iucr = models.CharField(max_length=10)
     primary_type = models.CharField(max_length=50)
@@ -19,7 +19,7 @@ class Crime(models.Model):
     x_coordinate = models.FloatField(null=True, blank=True)
     y_coordinate = models.FloatField(null=True, blank=True)
     year = models.IntegerField()
-    updated_on = models.DateTimeField()
+    updated_on = models.CharField(max_length=254)
     latitude = models.FloatField(null=True, blank=True)
     longitude = models.FloatField(null=True, blank=True)
     location = models.CharField(max_length=100, null=True, blank=True)
@@ -32,3 +32,15 @@ class Crime(models.Model):
         verbose_name_plural = 'Crime Records'
         ordering = ('date',)
 
+from import_export.admin import ImportExportModelAdmin
+from .models import Crime
+
+class CrimeAdmin(ImportExportModelAdmin):
+    list_display = ('case_number', 'date', 'block', 'primary_type', 'description', 'location_description', 'arrest', 'domestic', 'beat', 'district',
+                    'ward', 'community_area', 'fbi_code', 'x_coordinate', 'y_coordinate', 'year', 'updated_on', 'latitude', 'longitude', 'location')
+    list_filter = ('date', 'primary_type', 'description', 'location_description', 'arrest', 'domestic', 'beat',
+                   'district', 'ward', 'community_area', 'fbi_code', 'year', 'updated_on', 'latitude', 'longitude', 'location')
+    search_fields = ('case_number', 'block', 'primary_type', 'description', 'location_description', 'arrest', 'domestic', 'beat', 'district',
+                     'ward', 'community_area', 'fbi_code', 'x_coordinate', 'y_coordinate', 'year', 'updated_on', 'latitude', 'longitude', 'location')
+    ordering = ('date',)
+    list_per_page = 25
