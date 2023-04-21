@@ -4,6 +4,10 @@ from tablib import Dataset
 from .resources import CrimeResource
 from django.contrib.auth.decorators import login_required
 
+# pagination
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
+
 from .models import Crime
 
 @login_required
@@ -18,6 +22,16 @@ def IndexView(request):
 
 def DataTableView(request):
     crimes = Crime.objects.all()
+    paginator = Paginator(crimes, 100)
+    page = request.GET.get('page')
+    try:
+        crimes = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        crimes = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        crimes = paginator.page(paginator.num_pages)
     context = {
         'crimes': crimes,
     }
