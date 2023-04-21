@@ -16,6 +16,14 @@ def IndexView(request):
     }
     return render(request, 'index.html', context)
 
+def DataTableView(request):
+    crimes = Crime.objects.all()
+    context = {
+        'crimes': crimes,
+    }
+    return render(request, 'data.html', context)
+
+
 def import_data(request):
     if request.method == 'POST':
         file_format = request.POST['file-format']
