@@ -13,7 +13,7 @@
     <!--navigation-->
     <ul class="metismenu" id="menu">
         <li>
-            <a href="javascript:;" class="">
+            <a href="{% url 'core:index' %}" class="">
                 <div class="parent-icon"><i class='bx bx-home-alt'></i>
                 </div>
                 <div class="menu-title">Dashboard</div>
@@ -35,6 +35,14 @@
                 <div class="parent-icon"><i class='bx bx-grid-alt'></i>
                 </div>
                 <div class="menu-title">Data</div>
+            </a>
+        </li>
+
+        <li>
+            <a href="{% url 'core:data' %}">
+                <div class="parent-icon"><i class='bx bx-grid'></i>
+                </div>
+                <div class="menu-title">Data Description</div>
             </a>
         </li>
 

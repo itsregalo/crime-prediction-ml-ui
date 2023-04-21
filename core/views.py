@@ -63,3 +63,40 @@ def import_data(request):
             messages.error(request, "There was an error importing the file.")
 
     return render(request, 'import_data.html')
+
+#Importing all necessary libraries
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import missingno as msno 
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.naive_bayes import GaussianNB
+from sklearn import tree
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn import metrics
+from sklearn.metrics import classification_report
+from sklearn import preprocessing
+from scipy.cluster.hierarchy import linkage, dendrogram, fcluster
+from sklearn.cluster import KMeans, DBSCAN
+%matplotlib inline
+sns.set_style("darkgrid")
+
+def data_description(request):
+    """
+    get data info, data description, data visualization
+    """
+    original_dataset = Crime.objects.all()
+    df = pd.DataFrame(list(original_dataset.values()))
+    df = df.drop(['id'], axis=1)
+
+    # handling any inconsistent column names
+    df.columns = df.columns.str.strip().str.lower().str.replace(' ', '_').str.replace('(', '').str.replace(')', '')
+
+    data_info = df.info()
+    data_description = df.describe()
+    
+
+    return render(request, 'data_description.html')
