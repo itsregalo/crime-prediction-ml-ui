@@ -1,7 +1,7 @@
 from django.db import models
 
 class Crime(models.Model):
-    id = models.IntegerField(primary_key=True)
+    id = models.IntegerField(primary_key=True, unique=True)
     case_number = models.CharField(max_length=20)
     date = models.CharField(max_length=50)
     block = models.CharField(max_length=50)

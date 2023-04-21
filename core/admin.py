@@ -11,6 +11,6 @@ class CrimeAdmin(ImportExportModelAdmin):
     search_fields = ('case_number', 'block', 'primary_type', 'description', 'location_description', 'arrest', 'domestic', 'beat', 'district',
                      'ward', 'community_area', 'fbi_code', 'x_coordinate', 'y_coordinate', 'year', 'updated_on', 'latitude', 'longitude', 'location')
     ordering = ('date',)
-    list_per_page = 25
+    list_per_page = 100
 
 admin.site.register(Crime, CrimeAdmin)

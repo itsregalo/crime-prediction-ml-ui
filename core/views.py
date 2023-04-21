@@ -9,7 +9,7 @@ from .models import Crime
 @login_required
 def IndexView(request):
     data_count = Crime.objects.count()
-    latest_crimes = Crime.objects.order_by('-date')[:5]
+    latest_crimes = Crime.objects.order_by('-date')[:15]
     context = {
         'data_count': data_count,
         'latest_crimes': latest_crimes,
