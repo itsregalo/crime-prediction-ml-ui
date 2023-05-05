@@ -471,6 +471,18 @@ def data_analytics(request, *args, **kwargs):
     plt.legend(loc = 'best')
     complete_crimes_map_b64 = plot_to_base64(plt)
 
+    fig, ax = plt.subplots(figsize=(9, 6))
+    crimes_data_df.loc[(crimes_data_df['x_coordinate'] > 0) & (crimes_data_df['y_coordinate'] > 0)]
+    sns.lmplot(x='x_coordinate',
+            y='y_coordinate',
+            data=new_crimes_data_df,
+            fit_reg=False,
+            hue='primary_type_grouped',
+            scatter_kws={"marker": "D",
+                        "s": 20})
+    ax = plt.gca()
+    ax.set_title('Chicago Crime Map')
+    complete_crimes_map_b64_2 = plot_to_base64(plt)
 
     context = {
         'sample_dataset': sample_dataset,
@@ -492,8 +504,7 @@ def data_analytics(request, *args, **kwargs):
         'complete_arrests_per_crime_type_b64': complete_arrests_per_crime_type_b64,
         'complete_crimes_per_location_b64': complete_crimes_per_location_b64,
         'complete_crimes_map_b64': complete_crimes_map_b64,
-
-
+        'complete_crimes_map_b64_2': complete_crimes_map_b64_2,
     }
 
     return render(request, 'data_analytics.html', context)
