@@ -35,18 +35,46 @@ class Crime(models.Model):
     def total_crimes(self):
         return self.objects.count()
 
+"""
+Data Types:
+date                    datetime64[ns]
+block                           object
+iucr                            object
+primary_type                    object
+description                     object
+location_description            object
+arrest                           int64
+domestic                         int64
+beat                             int64
+district                         int64
+ward                           float64
+community_area                   int64
+fbi_code                        object
+x_coordinate                   float64
+y_coordinate                   float64
+year                             int64
+updated_on                      object
+latitude                       float64
+longitude                      float64
+day_of_week                     object
+month                           object
+time                             int64
+primary_type_grouped            object
+zone                            object
+season                          object
+loc_grouped                     object
+"""
 
-class PreprocessedCrime(models.Model):
-    id = models.IntegerField(primary_key=True, unique=True)
-    case_number = models.CharField(max_length=20)
-    date = models.CharField(max_length=50)
+# model with above data types
+class ProcessedCrimeData(models.Model):
+    date = models.DateTimeField()
     block = models.CharField(max_length=50)
     iucr = models.CharField(max_length=10)
     primary_type = models.CharField(max_length=50)
     description = models.CharField(max_length=200)
     location_description = models.CharField(max_length=100)
-    arrest = models.BooleanField()
-    domestic = models.BooleanField()
+    arrest = models.IntegerField()
+    domestic = models.IntegerField()
     beat = models.IntegerField()
     district = models.IntegerField()
     ward = models.FloatField(null=True, blank=True)
@@ -59,14 +87,20 @@ class PreprocessedCrime(models.Model):
     latitude = models.FloatField(null=True, blank=True)
     longitude = models.FloatField(null=True, blank=True)
     location = models.CharField(max_length=100, null=True, blank=True)
-    crime_type = models.CharField(max_length=50, null=True, blank=True)
+    day_of_week = models.CharField(max_length=10)
+    month = models.CharField(max_length=10)
+    time = models.IntegerField()
+    primary_type_grouped = models.CharField(max_length=50)
+    zone = models.CharField(max_length=10)
+    season = models.CharField(max_length=10)
+    loc_grouped = models.CharField(max_length=50)
 
     def __str__(self):
         return self.case_number
     
     class Meta:
-        db_table = 'preprocessed_crime_records'
-        verbose_name_plural = 'Preprocessed Crime Records'
+        db_table = 'processed_crime_records'
+        verbose_name_plural = 'Processed Crime Records'
         ordering = ('date',)
 
     def total_crimes(self):

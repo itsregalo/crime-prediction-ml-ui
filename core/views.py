@@ -284,3 +284,42 @@ def clean_data(request, *args, **kwargs):
     #Mapping crimes to ints to get better information from plots
     crimes_data.arrest = crimes_data.arrest.astype(int)
     crimes_data.domestic = crimes_data.domestic.astype(int)
+
+    # save the cleaned data to the ProcessedCrimeData model
+    from .models import ProcessedCrimeData
+
+    for index, row in crimes_data.iterrows():
+        crime = ProcessedCrimeData(
+            date = row['date'],
+            block = row['block'],
+            iucr = row['iucr'],
+            primary_type = row['primary_type'],
+            description = row['description'],
+            location_description = row['location_description'],
+            arrest = row['arrest'],
+            domestic = row['domestic'],
+            beat = row['beat'],
+            district = row['district'],
+            ward = row['ward'],
+            community_area = row['community_area'],
+            fbi_code = row['fbi_code'],
+            year = row['year'],
+            updated_on = row['updated_on'],
+            latitude = row['latitude'],
+            longitude = row['longitude'],
+            location = row['location'],
+            month = row['month'],
+            day = row['day'],
+            hour = row['hour'],
+            day_of_week = row['day_of_week'],
+            zone = row['zone'],
+            season = row['season'],
+            loc_grouped = row['loc_grouped']
+        )
+        crime.save()
+
+    context = {
+        'crimes_data': crimes_data
+    }
+
+    return render(request, 'crimes/crimes.html', context)
