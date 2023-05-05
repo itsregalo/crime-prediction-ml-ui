@@ -162,24 +162,21 @@ def clean_data(request, *args, **kwargs):
     get data info, data description, data visualization
     """
     original_dataset = Crime.objects.all()
-    df = pd.DataFrame(list(original_dataset.values()))
-    df = df.drop(['id'], axis=1)
+    crimes_data = pd.DataFrame(list(original_dataset.values()))
+    crimes_data = crimes_data.drop(['id'], axis=1)
 
-    # handling any inconsistent column names
-    df.columns = df.columns.str.strip().str.lower().str.replace(' ', '_').str.replace('(', '').str.replace(')', '')
+    #Handling any inconsistensis of column names
+    crimes_data.columns = crimes_data.columns.str.strip()
+    crimes_data.columns = crimes_data.columns.str.replace(',', '')
+    crimes_data.columns = crimes_data.columns.str.replace(' ', '_')
+    crimes_data.columns = crimes_data.columns.str.lower()
 
-    # data info, present in the data_description.html
-    data_info = df.info()
-    data_description = df.describe()
-    sample_data = df.head()
-    # no of districts
-    no_of_districts = df['district'].nunique()
+    # Removing Primary key type attriburtes as they of no use for any type of analysis, Location columns is just a 
+    # combination of Latitude and Longitude
+    crimes_data.drop(['case_number','location'],axis=1,inplace=True)
 
-    # Removing Primary key type attriburtes as they of no use for any type of analysis, Location columns is just a  combination of Latitude and Longitude
-
-    df.drop(['case_number','location'],axis=1,inplace=True)
-
-    crimes_data = df.dropna(subset=['latitude'],inplace=True)
+    #Dropping observations where latitude is null/Nan
+    crimes_data.dropna(subset=['latitude'],inplace=True)
     crimes_data.reset_index(drop=True,inplace=True)
 
     crimes_data.dropna(inplace=True)
@@ -303,15 +300,16 @@ def clean_data(request, *args, **kwargs):
             ward = row['ward'],
             community_area = row['community_area'],
             fbi_code = row['fbi_code'],
+            x_coordinate = row['x_coordinate'],
+            y_coordinate = row['y_coordinate'],
             year = row['year'],
             updated_on = row['updated_on'],
             latitude = row['latitude'],
             longitude = row['longitude'],
-            location = row['location'],
-            month = row['month'],
-            day = row['day'],
-            hour = row['hour'],
             day_of_week = row['day_of_week'],
+            month = row['month'],
+            time = row['time'],
+            primary_type_grouped = row['primary_type_grouped'],
             zone = row['zone'],
             season = row['season'],
             loc_grouped = row['loc_grouped']
@@ -322,4 +320,4 @@ def clean_data(request, *args, **kwargs):
         'crimes_data': crimes_data
     }
 
-    return render(request, 'crimes/crimes.html', context)
+    return render(request, 'preprocessing.html', context)

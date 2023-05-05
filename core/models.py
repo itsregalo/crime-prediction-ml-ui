@@ -86,7 +86,6 @@ class ProcessedCrimeData(models.Model):
     updated_on = models.CharField(max_length=254)
     latitude = models.FloatField(null=True, blank=True)
     longitude = models.FloatField(null=True, blank=True)
-    location = models.CharField(max_length=100, null=True, blank=True)
     day_of_week = models.CharField(max_length=10)
     month = models.CharField(max_length=10)
     time = models.IntegerField()
@@ -105,3 +104,5 @@ class ProcessedCrimeData(models.Model):
 
     def total_crimes(self):
         return self.objects.count()
+    
+
