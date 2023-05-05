@@ -9,7 +9,7 @@ from IPython.display import HTML
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 
-from .models import Crime
+from .models import Crime, ProcessedCrimeData
 
 @login_required
 def IndexView(request):
@@ -321,3 +321,17 @@ def clean_data(request, *args, **kwargs):
     }
 
     return render(request, 'preprocessing.html', context)
+
+def data_analytics(request, *args, **kwargs):
+    cleaned_dataset = ProcessedCrimeData.objects.all()
+
+    context = {
+        'cleaned_dataset': cleaned_dataset,
+        'total_crimes': cleaned_dataset.count(),
+        
+    }
+
+    return render(request, 'data_analytics.html', context)
+
+
+

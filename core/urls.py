@@ -9,5 +9,6 @@ urlpatterns = [
     path('data/', DataTableView, name='data'),
     path('data-description', data_description, name='data-description'),
     path('preprocess-data/', clean_data, name='preprocess-data'),
-    path('import-data/', import_data, name='import-data')
+    path('import-data/', import_data, name='import-data'),
+    path('data-analytics/', data_analytics, name='data-analytics'),
 ]

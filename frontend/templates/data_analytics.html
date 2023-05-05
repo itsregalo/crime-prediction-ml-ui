@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} Data Analytics {% endblock title %}
+
+{% block body %}
+
+<div class="page-wrapper">
+    <div class="page-content">
+        <!--breadcrumb-->
+        <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+            <div class="breadcrumb-title pe-3">Widget</div>
+            <div class="ps-3">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-0 p-0">
+                        <li class="breadcrumb-item"><a href="javascript:;"><i class="bx bx-home-alt"></i></a>
+                        </li>
+                        <li class="breadcrumb-item active" aria-current="page">Widgets</li>
+                    </ol>
+                </nav>
+            </div>
+            <div class="ms-auto">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-primary">Settings</button>
+                    <button type="button" class="btn btn-primary split-bg-primary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown">	<span class="visually-hidden">Toggle Dropdown</span>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-right dropdown-menu-lg-end">	<a class="dropdown-item" href="javascript:;">Action</a>
+                        <a class="dropdown-item" href="javascript:;">Another action</a>
+                        <a class="dropdown-item" href="javascript:;">Something else here</a>
+                        <div class="dropdown-divider"></div>	<a class="dropdown-item" href="javascript:;">Separated link</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--end breadcrumb-->
+
+        <h6 class="mb-0 text-uppercase">Cleaned Datasets</h6>
+        <hr>
+        <div class="row row-cols-1 row-cols-md-2 row-cols-xl-4">
+            
+            <div class="col">
+                <div class="card radius-10">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div>
+                                <p class="mb-0 text-secondary">Total Crimes</p>
+                                <h4 class="my-1">{{ total_crimes }}</h4>
+                            </div>
+                            <div class="text-primary ms-auto font-35"><i class="bx bxl-chrome"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card radius-10">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div>
+                                <p class="mb-0 text-secondary">Github Users</p>
+                                <h4 class="my-1">56M</h4>
+                            </div>
+                            <div class="text-danger ms-auto font-35"><i class="bx bxl-github"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card radius-10">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div>
+                                <p class="mb-0 text-secondary">Firefox Users</p>
+                                <h4 class="my-1">42M</h4>
+                            </div>
+                            <div class="text-warning ms-auto font-35"><i class="bx bxl-firefox"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card radius-10">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div>
+                                <p class="mb-0 text-secondary">Shopify Users</p>
+                                <h4 class="my-1">85M</h4>
+                            </div>
+                            <div class="text-success ms-auto font-35"><i class="bx bxl-shopify"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--end row-->
+
+        <h6 class="mb-0 text-uppercase">Cleaned Datasets</h6>
+        <hr>
+        <div class="row row-cols-1 row-cols-md-2 row-cols-xl-4">
+            
+            
+        </div>
+        <!--end row-->
+        
+    </div>
+</div>
+
+{% endblock body %}
