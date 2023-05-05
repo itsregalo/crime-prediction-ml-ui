@@ -81,7 +81,6 @@ from sklearn.metrics import classification_report
 from sklearn import preprocessing
 from scipy.cluster.hierarchy import linkage, dendrogram, fcluster
 from sklearn.cluster import KMeans, DBSCAN
-%matplotlib inline
 sns.set_style("darkgrid")
 
 def data_description(request):
@@ -97,6 +96,11 @@ def data_description(request):
 
     data_info = df.info()
     data_description = df.describe()
-    
+    sample_data = df.head(10)
 
-    return render(request, 'data_description.html')
+    context = {
+        'data_info': data_info,
+        'data_description': data_description,
+        'sample_data': sample_data,
+    }
+    return render(request, 'data_description.html', context)
