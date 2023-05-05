@@ -9,7 +9,12 @@ from IPython.display import HTML
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 
-from .models import Crime, ProcessedCrimeData
+from .models import Crime, ProcessedCrimeData, latest_model_statistics, crime_type_model_statistics
+# import settings
+from django.conf import settings
+# import pickle
+import pickle
+import os
 
 
 @login_required
@@ -471,7 +476,7 @@ def data_analytics(request, *args, **kwargs):
     plt.legend(loc = 'best')
     complete_crimes_map_b64 = plot_to_base64(plt)
 
-    fig, ax = plt.subplots(figsize=(9, 6))
+    fig, ax = plt.subplots(figsize=(10, 6))
     crimes_data_df.loc[(crimes_data_df['x_coordinate'] > 0) & (crimes_data_df['y_coordinate'] > 0)]
     sns.lmplot(x='x_coordinate',
             y='y_coordinate',
@@ -513,3 +518,245 @@ def data_analytics(request, *args, **kwargs):
 def verify_cleaning(request, *args, **kwargs):
     if request.method == 'POST':
         return HttpResponseRedirect(redirect('core:preprocess-data'))
+
+
+def train_model(request, *args, **kwargs):
+    cleaned_data = ProcessedCrimeData.objects.all()
+
+    # convert to pandas dataframe
+    crimes_data = pd.DataFrame(list(cleaned_data.values()))
+
+    # drop unnecessary columns
+    crimes_data.drop(['id'], axis=1, inplace=True)
+
+    #Converting the numercial attributes to categorical attributes
+    crimes_data.year = pd.Categorical(crimes_data.year)
+    crimes_data.time = pd.Categorical(crimes_data.time)
+    crimes_data.domestic = pd.Categorical(crimes_data.domestic)
+    crimes_data.arrest = pd.Categorical(crimes_data.arrest)
+    crimes_data.beat = pd.Categorical(crimes_data.beat)
+    crimes_data.district = pd.Categorical(crimes_data.district)
+    crimes_data.ward = pd.Categorical(crimes_data.ward)
+    crimes_data.community_area = pd.Categorical(crimes_data.community_area)
+
+    crimes_data_prediction = crimes_data.drop(['date','block','iucr','primary_type','description','location_description','fbi_code','updated_on','x_coordinate','y_coordinate'],axis=1)
+
+    crimes_data_prediction = pd.get_dummies(crimes_data_prediction,drop_first=True)
+
+    #Train test split with a test set size of 30% of entire data
+    X_train, X_test, y_train, y_test = train_test_split(crimes_data_prediction.drop(['arrest_1'],axis=1),crimes_data_prediction['arrest_1'], test_size=0.3, random_state=42)
+
+    #Standardizing the data
+    scaler = StandardScaler()
+    scaler.fit(X_train)
+    X_train = scaler.transform(X_train) 
+    X_test = scaler.transform(X_test)
+
+    #Training the model
+    #Random Forest classifier  - Best one
+    model = RandomForestClassifier(n_estimators = 10,criterion='entropy',random_state=42)
+
+    #Fitting the model
+    model.fit(X_train,y_train)
+
+    #Predicting the test set results
+    y_pred = model.predict(X_test)
+
+    # save the model to static folder
+    filename = 'finalized_model.sav'
+    pickle.dump(model, open(os.path.join(settings.STATIC_ROOT, filename), 'wb'))
+
+    # Compute confusion matrix
+    conf_matrix = metrics.confusion_matrix(y_test, y_pred)
+
+    fig, ax = plt.subplots(figsize=(10, 6))
+    # Plot confusion matrix
+    sns.heatmap(conf_matrix, annot = True, fmt = ".3f", square = True, cmap = plt.cm.Blues)
+    plt.ylabel('Actual')
+    plt.xlabel('Predicted')
+    plt.title('Confusion matrix')
+    plt.tight_layout()
+    model_confusion_matrix_b64 = plot_to_base64(plt)
+
+    #Classification Metrics
+    accuracy = metrics.accuracy_score(y_test, y_pred)
+    error = 1 - accuracy,
+    precision = metrics.precision_score(y_test, y_pred,)
+    recall = metrics.recall_score(y_test, y_pred)
+    f1_score = metrics.f1_score(y_test, y_pred)
+    classification_report = metrics.classification_report(y_test, y_pred)
+
+    latest_stats = latest_model_statistics.objects.create(
+        model_accuracy=accuracy,
+        model_precision=precision,
+        model_error=error,
+        model_recall=recall,
+        model_f1_score=f1_score,
+        model_classification_report=classification_report,
+        model_confusion_matrix=conf_matrix,
+    )
+    latest_stats.save()
+
+
+    crimes_data_type = crimes_data.loc[crimes_data.primary_type_grouped.isin(['THEFT','NON-CRIMINAL_ASSAULT','CRIMINAL_OFFENSE'])]
+    crimes_data_prediction = crimes_data_type.drop(['date','block','iucr','primary_type','description','location_description','fbi_code','updated_on','x_coordinate','y_coordinate','primary_type_grouped'],axis=1)
+    crimes_data_prediction_type = crimes_data_type.primary_type_grouped
+    crimes_data_prediction = pd.get_dummies(crimes_data_prediction,drop_first=True)
+
+    X_train, X_test, y_train, y_test = train_test_split(crimes_data_prediction,crimes_data_prediction_type, test_size=0.3, random_state=42)
+
+    scaler = StandardScaler()
+    scaler.fit(X_train)
+    X_train = scaler.transform(X_train) 
+    X_test = scaler.transform(X_test)
+
+    #Random Forest classifier for type of crime
+    model = RandomForestClassifier(n_estimators = 10,criterion='entropy',random_state=42)
+    model.fit(X_train,y_train)
+    y_pred = model.predict(X_test)
+
+    # Compute confusion matrix
+    conf_matrix = metrics.confusion_matrix(y_test, y_pred)
+
+    fig, ax = plt.subplots(figsize=(10, 6))
+    # Plot confusion matrix
+    sns.heatmap(conf_matrix, annot = True, fmt = ".3f", square = True, cmap = plt.cm.Blues)
+    plt.ylabel('Actual')
+    plt.xlabel('Predicted')
+    plt.title('Confusion matrix')
+    plt.tight_layout()
+    crime_type_model_confusion_matrix_b64_2 = plot_to_base64(plt)
+
+    #Classification Metrics
+    accuracy = metrics.accuracy_score(y_test, y_pred)
+    error = 1 - accuracy,
+    precision = metrics.precision_score(y_test, y_pred,average='weighted')
+    recall = metrics.recall_score(y_test, y_pred,average='weighted')
+    f1_score = metrics.f1_score(y_test, y_pred,average='weighted')
+    classification_report = metrics.classification_report(y_test, y_pred)
+
+    crime_type_latest_stats = crime_type_model_statistics.objects.create(
+        model_accuracy=accuracy,
+        model_precision=precision,
+        model_error=error,
+        model_recall=recall,
+        model_f1_score=f1_score,
+        model_classification_report=classification_report,
+        model_confusion_matrix=conf_matrix,
+    )
+    crime_type_latest_stats.save()
+
+    # Calculated the number of occrurances for each type of crime category in each district
+    district_crime_rates = pd.DataFrame(columns=['theft_count', 'assault_count', 'sexual_offense_count', 
+                                                'weapons_offense_count', 'criminal_offense_count', 
+                                                'human_trafficking_count', 'narcotic_offense_count', 
+                                                'other_offense_count'])
+    district_crime_rates = district_crime_rates.astype(int) 
+
+    for i in range(1, 32):   
+        temp_district_df = crimes_data[crimes_data['district'] == i] 
+
+        temp_district_theft = temp_district_df[temp_district_df['primary_type_grouped'] == 'THEFT'] 
+        num_theft = temp_district_theft.primary_type_grouped.count() 
+        
+        temp_district_assault = temp_district_df[temp_district_df['primary_type_grouped'] == 'NON-CRIMINAL_ASSAULT'] 
+        num_assault = temp_district_assault.primary_type_grouped.count()    
+        
+        temp_district_sexual_offense = temp_district_df[temp_district_df['primary_type_grouped'] == 'SEXUAL_OFFENSE'] 
+        num_sexual_offense = temp_district_sexual_offense.primary_type_grouped.count()
+        
+        temp_district_weapons_offense = temp_district_df[temp_district_df['primary_type_grouped'] == 'WEAPONS_OFFENSE'] 
+        num_weapons_offense = temp_district_weapons_offense.primary_type_grouped.count()
+        
+        temp_district_criminal_offense = temp_district_df[temp_district_df['primary_type_grouped'] == 'CRIMINAL_OFFENSE'] 
+        num_criminal_offense = temp_district_criminal_offense.primary_type_grouped.count()
+        
+        temp_district_human_trafficking = temp_district_df[temp_district_df['primary_type_grouped'] == 'HUMAN_TRAFFICKING_OFFENSE'] 
+        num_human_trafficking = temp_district_human_trafficking.primary_type_grouped.count()
+        
+        temp_district_narcotic_offense = temp_district_df[temp_district_df['primary_type_grouped'] == 'NARCOTIC_OFFENSE'] 
+        num_narcotic_offense = temp_district_narcotic_offense.primary_type_grouped.count()
+        
+        temp_district_other_offense = temp_district_df[temp_district_df['primary_type_grouped'] == 'OTHER_OFFENSE'] 
+        num_other_offense = temp_district_other_offense.primary_type_grouped.count()
+
+        district_crime_rates.loc[i] = [num_theft, num_assault, num_sexual_offense, num_weapons_offense, num_criminal_offense, num_human_trafficking, num_narcotic_offense, num_other_offense]    
+        
+    # Standardize the data
+    district_crime_rates_standardized = preprocessing.scale(district_crime_rates)
+    district_crime_rates_standardized = pd.DataFrame(district_crime_rates_standardized)
+
+    # Clustering with K-Means 
+    kmeans = KMeans(n_clusters = 4, init = 'k-means++', random_state = 42)
+    y_kmeans = kmeans.fit_predict(district_crime_rates_standardized)
+    #y_kmeans
+
+    #beginning of  the cluster numbering with 1 instead of 0
+    y_kmeans1=y_kmeans+1
+
+    # New list called cluster
+    kmeans_clusters = list(y_kmeans1)
+    # Adding cluster to our data set
+    district_crime_rates['kmeans_cluster'] = kmeans_clusters
+
+    #Mean of clusters 1 to 4
+    kmeans_mean_cluster = pd.DataFrame(round(district_crime_rates.groupby('kmeans_cluster').mean(),1))
+
+    # Clustering with DBSCAN
+    clustering = DBSCAN(eps = 1, min_samples = 3, metric = "euclidean").fit(district_crime_rates_standardized)
+
+    # Show clusters
+    dbscan_clusters = clustering.labels_
+    # print(clusters)
+
+    district_crime_rates['dbscan_clusters'] = dbscan_clusters + 2
+    #district_crime_rates.head()
+
+    # Clustering with Hierarchical Clustering with average linkage
+    clustering = linkage(district_crime_rates_standardized, method = "average", metric = "euclidean")
+
+    # Plot dendrogram
+    plt.figure()
+    dendrogram(clustering)  
+    dendrogram_b64 = plot_to_base64(plt) # plot to base64
+
+
+    # Form clusters
+    hierarchical_clusters = fcluster(clustering, 4, criterion = 'maxclust')
+    # print(clusters)
+
+    district_crime_rates['hierarchical_clusters'] = hierarchical_clusters 
+
+    # Add 'district' column
+    district_crime_rates['district'] = district_crime_rates.index
+    district_crime_rates = district_crime_rates[['district', 'kmeans_cluster', 'dbscan_clusters', 'hierarchical_clusters', 'theft_count', 'assault_count', 'sexual_offense_count', 'weapons_offense_count', 'criminal_offense_count', 'human_trafficking_count', 'narcotic_offense_count', 'other_offense_count']]
+
+    # Remove all columns but 'district' & each method's cluster
+    district_crime_rates = district_crime_rates.drop(['theft_count', 'assault_count', 'sexual_offense_count', 'weapons_offense_count', 'criminal_offense_count', 'human_trafficking_count', 'narcotic_offense_count', 'other_offense_count'], axis=1)
+
+    # Merge each district's clusters for each method into a single dataframe 
+    crimes_data_clustered = pd.merge(crimes_data, district_crime_rates, on='district', how='inner')
+
+    # Plot Crime level clusters by district (KMeans Clustering)
+    new_crimes_data = crimes_data_clustered.loc[(crimes_data_clustered['x_coordinate']!=0)]
+
+    plt.figure(figsize=(20,10))
+    sns.lmplot(x='x_coordinate', y='y_coordinate', data=new_crimes_data, fit_reg=False, hue='kmeans_cluster', legend=True, scatter_kws={"s": 10})
+    plt.title('Crime level clusters by district (KMeans Clustering)')
+    crime_level_clusters_by_district_kmeans_b64 = plot_to_base64(plt) # plot to base64
+
+    # Crime level clusters by district (DBScan Clustering)
+    new_crimes_data = crimes_data_clustered.loc[(crimes_data_clustered['x_coordinate']!=0)]
+
+    plt.figure(figsize=(20,10))
+    sns.lmplot(x='x_coordinate', y='y_coordinate', data=new_crimes_data, fit_reg=False, hue='dbscan_clusters', legend=True, scatter_kws={"s": 10})
+    plt.title('Crime level clusters by district (DBScan Clustering)')
+    plt.legend(loc='upper right')
+    dbscan_clusters_b64 = plot_to_base64(plt) # plot to base64
+
+    # Crime level clusters by district (Hierarchical Clustering)
+    new_crimes_data = crimes_data_clustered.loc[(crimes_data_clustered['x_coordinate']!=0)]
+    sns.lmplot(x='x_coordinate', y='y_coordinate', data=new_crimes_data, fit_reg=False, hue='hierarchical_clusters', legend=True, scatter_kws={"s": 10})
+    plt.title('Crime level clusters by district (Hierarchical Clustering)')
+    hierarchical_clusters_b64 = plot_to_base64(plt) # plot to base64
+

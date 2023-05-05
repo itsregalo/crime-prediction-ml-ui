@@ -106,3 +106,58 @@ class ProcessedCrimeData(models.Model):
         return self.objects.count()
     
 
+
+class latest_model_statistics(models.Model):
+    model_name = models.CharField(max_length=50, blank=True)
+    model_accuracy = models.FloatField()
+    model_precision = models.FloatField()
+    model_recall = models.FloatField()
+    model_error = models.FloatField()
+    model_f1_score = models.FloatField()
+    model_confusion_matrix = models.CharField(max_length=1000)
+    model_classification_report = models.CharField(max_length=1000)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.timestamp
+    
+    def save(self, *args, **kwargs):
+        if not self.model_name:
+            self.model_name = 'Random Forest Classifier' + str(self.timestamp)
+        super(latest_model_statistics, self).save(*args, **kwargs)
+    
+    class Meta:
+        db_table = 'latest_model_statistics'
+        verbose_name_plural = 'Latest Model Statistics'
+        ordering = ('-timestamp',)
+
+    def total_crimes(self):
+        return self.objects.count()
+    
+
+class crime_type_model_statistics(models.Model):
+    model_name = models.CharField(max_length=50, blank=True)
+    model_accuracy = models.FloatField()
+    model_precision = models.FloatField()
+    model_recall = models.FloatField()
+    model_error = models.FloatField()
+    model_f1_score = models.FloatField()
+    model_confusion_matrix = models.CharField(max_length=1000)
+    model_classification_report = models.CharField(max_length=1000)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.timestamp
+    
+    def save(self, *args, **kwargs):
+        if not self.model_name:
+            self.model_name = 'Random Forest Classifier' + str(self.timestamp)
+        super(crime_type_model_statistics, self).save(*args, **kwargs)
+    
+    class Meta:
+        db_table = 'crime_type_model_statistics'
+        verbose_name_plural = 'Crime Type Model Statistics'
+        ordering = ('-timestamp',)
+
+    def total_crimes(self):
+        return self.objects.count() 
