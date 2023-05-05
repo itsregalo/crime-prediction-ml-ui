@@ -3,6 +3,7 @@ from django.contrib import messages
 from tablib import Dataset
 from .resources import CrimeResource
 from django.contrib.auth.decorators import login_required
+from IPython.display import HTML
 
 # pagination
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -94,13 +95,37 @@ def data_description(request):
     # handling any inconsistent column names
     df.columns = df.columns.str.strip().str.lower().str.replace(' ', '_').str.replace('(', '').str.replace(')', '')
 
+    # data info, present in the data_description.html
     data_info = df.info()
     data_description = df.describe()
-    sample_data = df.head(10)
+    sample_data = df.head()
+    # no of districts
+    no_of_districts = df['district'].nunique()
 
+    # Removing Primary key type attriburtes as they of no use for any type of analysis, Location columns is just a  combination of Latitude and Longitude
+
+    df.drop(['case_number','location'],axis=1,inplace=True)
+
+    msno_heatmap = msno.heatmap(df,figsize=(15, 5))
+    print(msno_heatmap)
+
+    # dendrogram
+    msno_dendrogram = msno.dendrogram(df,figsize=(15, 5))
+    
+    
+    # to display the plots in h
     context = {
         'data_info': data_info,
         'data_description': data_description,
-        'sample_data': sample_data,
+        'total_rows': df.shape[0],
+        'missing_values': df.isnull().sum().sum(),
+        'no_of_districts': no_of_districts,
+        'sample_data': sample_data.to_html(classes='table table-striped table-hover'),
+        # last_updated converted to datetime
+        'last_updated': pd.to_datetime(df['updated_on']).max(),
+
+        # plots to display in html
+        'msno_heatmap': msno_heatmap,
+        'msno_dendrogram': msno_dendrogram,
     }
     return render(request, 'data_description.html', context)

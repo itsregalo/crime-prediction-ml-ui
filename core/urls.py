@@ -7,5 +7,6 @@ urlpatterns = [
     # ... your other URL patterns ...
     path('', IndexView, name='index'),
     path('data/', DataTableView, name='data'),
+    path('data-description', data_description, name='data-description'),
     path('import-data/', import_data, name='import-data')
 ]

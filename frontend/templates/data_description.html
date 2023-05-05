@@ -1,0 +1,266 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block title %}
+    Home
+{% endblock title %}
+
+
+
+{% block body %}
+    
+		<!--start page wrapper -->
+		<div class="page-wrapper">
+			<div class="page-content">
+				<div class="row row-cols-1 row-cols-md-2 row-cols-xl-4">
+                   <div class="col">
+					 <div class="card radius-10 border-start border-0 border-4 border-info">
+						<div class="card-body">
+							<div class="d-flex align-items-center">
+								<div>
+									<p class="mb-0 text-secondary">Total Crimes</p>
+									<h4 class="my-1 text-info">{{ total_rows }}</h4>
+									<p class="mb-0 font-13">+2.5% from last week</p>
+								</div>
+								<div class="widgets-icons-2 rounded-circle bg-gradient-blues text-white ms-auto"><i class='bx bxs-cart'></i>
+								</div>
+							</div>
+						</div>
+					 </div>
+				   </div>
+				   <div class="col">
+					<div class="card radius-10 border-start border-0 border-4 border-danger">
+					   <div class="card-body">
+						   <div class="d-flex align-items-center">
+							   <div>
+								   <p class="mb-0 text-secondary">Missing Values</p>
+								   <h4 class="my-1 text-danger">{{missing_values}}</h4>
+								   <p class="mb-0 font-13">+5.4% from last week</p>
+							   </div>
+							   <div class="widgets-icons-2 rounded-circle bg-gradient-burning text-white ms-auto"><i class='bx bxs-wallet'></i>
+							   </div>
+						   </div>
+					   </div>
+					</div>
+				  </div>
+				  <div class="col">
+					<div class="card radius-10 border-start border-0 border-4 border-success">
+					   <div class="card-body">
+						   <div class="d-flex align-items-center">
+							   <div>
+								   <p class="mb-0 text-secondary">Districts</p>
+								   <h4 class="my-1 text-success">{{no_of_districts}}</h4>
+								   <p class="mb-0 font-13">-4.5% from recent</p>
+							   </div>
+							   <div class="widgets-icons-2 rounded-circle bg-gradient-ohhappiness text-white ms-auto"><i class='bx bxs-bar-chart-alt-2' ></i>
+							   </div>
+						   </div>
+					   </div>
+					</div>
+				  </div>
+				  <div class="col">
+					<div class="card radius-10 border-start border-0 border-4 border-warning">
+					   <div class="card-body">
+						   <div class="d-flex align-items-center">
+							   <div>
+								   <p class="mb-0 text-secondary">Last Update</p>
+								   <h4 class="my-1 text-warning">{{last_updated | date:"d M Y"}}</h4>
+								   <p class="mb-0 font-13">+8.4% from last week</p>
+							   </div>
+							   <div class="widgets-icons-2 rounded-circle bg-gradient-orange text-white ms-auto"><i class='bx bxs-group'></i>
+							   </div>
+						   </div>
+					   </div>
+					</div>
+				  </div> 
+				</div><!--end row-->
+
+				<div class="row">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="d-flex align-items-center">
+                                <div>
+                                    <h6 class="mb-0">Data Head</h6>
+                                </div>
+                              
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            {{ sample_data | safe}}
+                        </div>
+                    </div>
+				</div><!--end row-->
+
+				 <div class="card radius-10">
+					<div class="card-header">
+						<div class="d-flex align-items-center">
+							<div>
+								<h6 class="mb-0">Recent Training</h6>
+							</div>
+							
+						</div>
+					</div>
+                        
+
+					 <div class="row row-cols-1 row-cols-lg-3">
+						 <div class="col d-flex">
+                           <div class="card radius-10 w-100">
+							   <div class="card-body">
+								<p class="font-weight-bold mb-1 text-secondary">Weekly Revenue</p>
+								<div class="d-flex align-items-center mb-4">
+									<div>
+										<h4 class="mb-0">$89,540</h4>
+									</div>
+									<div class="">
+										<p class="mb-0 align-self-center font-weight-bold text-success ms-2">4.4% <i class="bx bxs-up-arrow-alt mr-2"></i>
+										</p>
+									</div>
+								</div>
+								<div class="chart-container-0 mt-5">
+									<canvas id="chart3">
+                                        {{msno_heatmap}}
+                                    </canvas>
+								  </div>
+							   </div>
+						   </div>
+						 </div>
+						 <div class="col d-flex">
+							<div class="card radius-10 w-100">
+								<div class="card-header bg-transparent">
+									<div class="d-flex align-items-center">
+										<div>
+											<h6 class="mb-0">Orders Summary</h6>
+										</div>
+										<div class="dropdown ms-auto">
+											<a class="dropdown-toggle dropdown-toggle-nocaret" href="#" data-bs-toggle="dropdown"><i class='bx bx-dots-horizontal-rounded font-22 text-option'></i>
+											</a>
+											<ul class="dropdown-menu">
+												<li><a class="dropdown-item" href="javascript:;">Action</a>
+												</li>
+												<li><a class="dropdown-item" href="javascript:;">Another action</a>
+												</li>
+												<li>
+													<hr class="dropdown-divider">
+												</li>
+												<li><a class="dropdown-item" href="javascript:;">Something else here</a>
+												</li>
+											</ul>
+										</div>
+									</div>
+								</div>
+								<div class="card-body">
+									<div class="chart-container-1 mt-3">
+										<canvas id="chart4"></canvas>
+									  </div>
+								</div>
+								<ul class="list-group list-group-flush">
+									<li class="list-group-item d-flex bg-transparent justify-content-between align-items-center border-top">Completed <span class="badge bg-gradient-quepal rounded-pill">25</span>
+									</li>
+									<li class="list-group-item d-flex bg-transparent justify-content-between align-items-center">Pending <span class="badge bg-gradient-ibiza rounded-pill">10</span>
+									</li>
+									<li class="list-group-item d-flex bg-transparent justify-content-between align-items-center">Process <span class="badge bg-gradient-deepblue rounded-pill">65</span>
+									</li>
+								</ul>
+							</div>
+						  </div>
+						  <div class="col d-flex">
+							<div class="card radius-10 w-100">
+								 <div class="card-header bg-transparent">
+									<div class="d-flex align-items-center">
+										<div>
+											<h6 class="mb-0">Top Selling Categories</h6>
+										</div>
+										<div class="dropdown ms-auto">
+											<a class="dropdown-toggle dropdown-toggle-nocaret" href="#" data-bs-toggle="dropdown"><i class='bx bx-dots-horizontal-rounded font-22 text-option'></i>
+											</a>
+											<ul class="dropdown-menu">
+												<li><a class="dropdown-item" href="javascript:;">Action</a>
+												</li>
+												<li><a class="dropdown-item" href="javascript:;">Another action</a>
+												</li>
+												<li>
+													<hr class="dropdown-divider">
+												</li>
+												<li><a class="dropdown-item" href="javascript:;">Something else here</a>
+												</li>
+											</ul>
+										</div>
+									 </div>
+								 </div>
+								<div class="card-body">
+								   <div class="chart-container-0">
+									 <canvas id="chart5"></canvas>
+								   </div>
+								</div>
+								<div class="row row-group border-top g-0">
+									<div class="col">
+										<div class="p-3 text-center">
+											<h4 class="mb-0 text-danger">$45,216</h4>
+											<p class="mb-0">Clothing</p>
+										</div>
+									</div>
+									<div class="col">
+										<div class="p-3 text-center">
+											<h4 class="mb-0 text-success">$68,154</h4>
+											<p class="mb-0">Electronic</p>
+										</div>
+									 </div>
+								</div><!--end row-->
+							</div>
+						  </div>
+					 </div><!--end row-->
+			</div>
+
+			<div class="card">
+				<div class="card-body">
+					<div class="table-responsive">
+						<div id="example2_wrapper" class="dataTables_wrapper dt-bootstrap5"><div class="row"><div class="col-sm-12 col-md-6"><div class="dt-buttons btn-group">      <button class="btn btn-outline-secondary buttons-copy buttons-html5" tabindex="0" aria-controls="example2" type="button"><span>Copy</span></button> <button class="btn btn-outline-secondary buttons-excel buttons-html5" tabindex="0" aria-controls="example2" type="button"><span>Excel</span></button> <button class="btn btn-outline-secondary buttons-pdf buttons-html5" tabindex="0" aria-controls="example2" type="button"><span>PDF</span></button> <button class="btn btn-outline-secondary buttons-print" tabindex="0" aria-controls="example2" type="button"><span>Print</span></button> </div></div><div class="col-sm-12 col-md-6"><div id="example2_filter" class="dataTables_filter"><label>Search:<input type="search" class="form-control form-control-sm" placeholder="" aria-controls="example2"></label></div></div></div><div class="row"><div class="col-sm-12"><table id="example2" class="table table-striped table-bordered dataTable" role="grid" aria-describedby="example2_info">
+							<thead>
+								<tr role="row">
+									<th class="sorting_asc" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-sort="ascending"
+										aria-label="Name: activate to sort column descending" style="width: 269.797px;">Case Number</th>
+									<th class="sorting" tabindex="0" aria-controls="example2" rowspan="1" colspan="1"
+										aria-label="Position: activate to sort column ascending" style="width: 430.672px;">Date</th>
+									<th class="sorting" tabindex="0" aria-controls="example2" rowspan="1" colspan="1"
+										aria-label="Office: activate to sort column ascending" style="width: 198.75px;">Block</th>
+									<th class="sorting" tabindex="0" aria-controls="example2" rowspan="1" colspan="1"
+										aria-label="Age: activate to sort column ascending" style="width: 100.531px;">IUCR</th>
+									<th class="sorting" tabindex="0" aria-controls="example2" rowspan="1" colspan="1"
+										aria-label="Start date: activate to sort column ascending" style="width: 187px;">Primary Type</th>
+									<th class="sorting" tabindex="0" aria-controls="example2" rowspan="1" colspan="1"
+										aria-label="Salary: activate to sort column ascending" style="width: 154.25px;">Arrest</th>
+								</tr>
+							</thead>
+							<tbody>
+							
+							
+							{% for crime in latest_crimes %}
+							
+							{% if crime.id|divisibleby:2 %}
+							<tr role="row" class="odd">
+							{% else %}
+							<tr role="row" class="even">
+							{% endif %}
+								<td class="sorting_1">{{crime.case_number}}</td>
+								<td>{{crime.date}}</td>
+								<td>{{crime.block}}</td>
+								<td>{{crime.iucr}}</td>
+								<td>{{crime.primary_type}}</td>
+								<td>{{crime.arrest}}</td>
+							</tr>
+							{% endfor %}
+								
+							</tbody>
+							<tfoot>
+								<tr><th rowspan="1" colspan="1">Name</th><th rowspan="1" colspan="1">Position</th><th rowspan="1" colspan="1">Office</th><th rowspan="1" colspan="1">Age</th><th rowspan="1" colspan="1">Start date</th><th rowspan="1" colspan="1">Salary</th></tr>
+							</tfoot>
+						</table></div></div><div class="row"><div class="col-sm-12 col-md-5"><div class="dataTables_info" id="example2_info" role="status" aria-live="polite">Showing 1 to 10 of 57 entries</div></div><div class="col-sm-12 col-md-7"><div class="dataTables_paginate paging_simple_numbers" id="example2_paginate"><ul class="pagination"><li class="paginate_button page-item previous disabled" id="example2_previous"><a href="#" aria-controls="example2" data-dt-idx="0" tabindex="0" class="page-link">Prev</a></li><li class="paginate_button page-item active"><a href="#" aria-controls="example2" data-dt-idx="1" tabindex="0" class="page-link">1</a></li><li class="paginate_button page-item "><a href="#" aria-controls="example2" data-dt-idx="2" tabindex="0" class="page-link">2</a></li><li class="paginate_button page-item "><a href="#" aria-controls="example2" data-dt-idx="3" tabindex="0" class="page-link">3</a></li><li class="paginate_button page-item "><a href="#" aria-controls="example2" data-dt-idx="4" tabindex="0" class="page-link">4</a></li><li class="paginate_button page-item "><a href="#" aria-controls="example2" data-dt-idx="5" tabindex="0" class="page-link">5</a></li><li class="paginate_button page-item "><a href="#" aria-controls="example2" data-dt-idx="6" tabindex="0" class="page-link">6</a></li><li class="paginate_button page-item next" id="example2_next"><a href="#" aria-controls="example2" data-dt-idx="7" tabindex="0" class="page-link">Next</a></li></ul></div></div></div></div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!--end page wrapper -->
+		
+{% endblock body %}
+    
