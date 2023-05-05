@@ -11,4 +11,5 @@ urlpatterns = [
     path('preprocess-data/', clean_data, name='preprocess-data'),
     path('import-data/', import_data, name='import-data'),
     path('data-analytics/', data_analytics, name='data-analytics'),
+    path('train-model/', train_model, name='train-model'),
 ]

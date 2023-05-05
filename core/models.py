@@ -161,3 +161,22 @@ class crime_type_model_statistics(models.Model):
 
     def total_crimes(self):
         return self.objects.count() 
+    
+
+class latest_predictions_plots(models.Model):
+    tree_plot = models.CharField(max_length=1000)
+    kmeans_plot = models.CharField(max_length=1000)
+    dbscan_plot = models.CharField(max_length=1000)
+    hierarchical_plot = models.CharField(max_length=1000)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.timestamp
+    
+    class Meta:
+        db_table = 'latest_predictions_plots'
+        verbose_name_plural = 'Latest Predictions Plots'
+        ordering = ('-timestamp',)
+
+    def total_crimes(self):
+        return self.objects.count()

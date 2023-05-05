@@ -9,7 +9,7 @@ from IPython.display import HTML
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 
-from .models import Crime, ProcessedCrimeData, latest_model_statistics, crime_type_model_statistics
+from .models import Crime, ProcessedCrimeData, latest_model_statistics, crime_type_model_statistics, latest_predictions_plots
 # import settings
 from django.conf import settings
 # import pickle
@@ -586,7 +586,8 @@ def train_model(request, *args, **kwargs):
     f1_score = metrics.f1_score(y_test, y_pred)
     classification_report = metrics.classification_report(y_test, y_pred)
 
-    latest_stats = latest_model_statistics.objects.create(
+    try:
+        latest_stats = latest_model_statistics.objects.create(
         model_accuracy=accuracy,
         model_precision=precision,
         model_error=error,
@@ -594,8 +595,10 @@ def train_model(request, *args, **kwargs):
         model_f1_score=f1_score,
         model_classification_report=classification_report,
         model_confusion_matrix=conf_matrix,
-    )
-    latest_stats.save()
+        )
+        latest_stats.save()
+    except:
+        pass
 
 
     crimes_data_type = crimes_data.loc[crimes_data.primary_type_grouped.isin(['THEFT','NON-CRIMINAL_ASSAULT','CRIMINAL_OFFENSE'])]
@@ -635,7 +638,8 @@ def train_model(request, *args, **kwargs):
     f1_score = metrics.f1_score(y_test, y_pred,average='weighted')
     classification_report = metrics.classification_report(y_test, y_pred)
 
-    crime_type_latest_stats = crime_type_model_statistics.objects.create(
+    try:
+        crime_type_latest_stats = crime_type_model_statistics.objects.create(
         model_accuracy=accuracy,
         model_precision=precision,
         model_error=error,
@@ -643,8 +647,10 @@ def train_model(request, *args, **kwargs):
         model_f1_score=f1_score,
         model_classification_report=classification_report,
         model_confusion_matrix=conf_matrix,
-    )
-    crime_type_latest_stats.save()
+        )
+        crime_type_latest_stats.save()
+    except:
+        pass
 
     # Calculated the number of occrurances for each type of crime category in each district
     district_crime_rates = pd.DataFrame(columns=['theft_count', 'assault_count', 'sexual_offense_count', 
@@ -718,7 +724,7 @@ def train_model(request, *args, **kwargs):
     # Plot dendrogram
     plt.figure()
     dendrogram(clustering)  
-    dendrogram_b64 = plot_to_base64(plt) # plot to base64
+    hierarchial_dendrogram_b64 = plot_to_base64(plt) # plot to base64
 
 
     # Form clusters
@@ -759,4 +765,18 @@ def train_model(request, *args, **kwargs):
     sns.lmplot(x='x_coordinate', y='y_coordinate', data=new_crimes_data, fit_reg=False, hue='hierarchical_clusters', legend=True, scatter_kws={"s": 10})
     plt.title('Crime level clusters by district (Hierarchical Clustering)')
     hierarchical_clusters_b64 = plot_to_base64(plt) # plot to base64
+
+    try:
+        latest_plots = latest_predictions_plots.objects.create(
+            tree_plot = hierarchial_dendrogram_b64,
+            kmeans_plot = crime_level_clusters_by_district_kmeans_b64,
+            dbscan_plot = dbscan_clusters_b64,
+            hierarchical_plot = hierarchical_clusters_b64
+        )
+        latest_plots.save()
+    except:
+        pass
+            
+
+
 
