@@ -4,6 +4,7 @@ from tablib import Dataset
 from .resources import CrimeResource
 from django.contrib.auth.decorators import login_required
 from IPython.display import HTML
+from django.urls import reverse
 
 # pagination
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -586,19 +587,18 @@ def train_model(request, *args, **kwargs):
     f1_score = metrics.f1_score(y_test, y_pred)
     classification_report = metrics.classification_report(y_test, y_pred)
 
-    try:
-        latest_stats = latest_model_statistics.objects.create(
-        model_accuracy=accuracy,
-        model_precision=precision,
-        model_error=error,
-        model_recall=recall,
-        model_f1_score=f1_score,
-        model_classification_report=classification_report,
-        model_confusion_matrix=conf_matrix,
-        )
-        latest_stats.save()
-    except:
-        pass
+
+    latest_stats = latest_model_statistics.objects.create(
+    model_accuracy=accuracy,
+    model_precision=precision,
+    model_error=error,
+    model_recall=recall,
+    model_f1_score=f1_score,
+    model_classification_report=classification_report,
+    model_confusion_matrix=conf_matrix,
+    )
+    latest_stats.save()
+
 
 
     crimes_data_type = crimes_data.loc[crimes_data.primary_type_grouped.isin(['THEFT','NON-CRIMINAL_ASSAULT','CRIMINAL_OFFENSE'])]
@@ -776,6 +776,8 @@ def train_model(request, *args, **kwargs):
         latest_plots.save()
     except:
         pass
+
+    return HttpResponseRedirect(reverse('core:index'))
             
 
 

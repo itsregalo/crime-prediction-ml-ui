@@ -112,14 +112,14 @@ class latest_model_statistics(models.Model):
     model_accuracy = models.FloatField()
     model_precision = models.FloatField()
     model_recall = models.FloatField()
-    model_error = models.FloatField()
+    model_error = models.CharField(max_length=250)
     model_f1_score = models.FloatField()
     model_confusion_matrix = models.CharField(max_length=1000)
     model_classification_report = models.CharField(max_length=1000)
     timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.timestamp
+        return str(self.timestamp)
     
     def save(self, *args, **kwargs):
         if not self.model_name:
@@ -140,14 +140,14 @@ class crime_type_model_statistics(models.Model):
     model_accuracy = models.FloatField()
     model_precision = models.FloatField()
     model_recall = models.FloatField()
-    model_error = models.FloatField()
+    model_error = models.CharField(max_length=250)
     model_f1_score = models.FloatField()
     model_confusion_matrix = models.CharField(max_length=1000)
     model_classification_report = models.CharField(max_length=1000)
     timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.timestamp
+        return str(self.timestamp)
     
     def save(self, *args, **kwargs):
         if not self.model_name:
@@ -171,7 +171,7 @@ class latest_predictions_plots(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.timestamp
+        return str(self.timestamp)
     
     class Meta:
         db_table = 'latest_predictions_plots'
@@ -180,3 +180,4 @@ class latest_predictions_plots(models.Model):
 
     def total_crimes(self):
         return self.objects.count()
+
