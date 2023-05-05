@@ -325,13 +325,13 @@ def clean_data(request, *args, **kwargs):
 def data_analytics(request, *args, **kwargs):
     cleaned_dataset = ProcessedCrimeData.objects.all()
 
+    sample_dataset = cleaned_dataset[:10]
+
     context = {
-        'cleaned_dataset': cleaned_dataset,
+        'sample_dataset': sample_dataset,
         'total_crimes': cleaned_dataset.count(),
-        
+
     }
 
     return render(request, 'data_analytics.html', context)
-
-
 
