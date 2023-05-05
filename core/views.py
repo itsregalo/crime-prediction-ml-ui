@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, HttpResponseRedirect, redirect
 from django.contrib import messages
 from tablib import Dataset
 from .resources import CrimeResource
@@ -10,6 +10,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 
 from .models import Crime, ProcessedCrimeData
+
 
 @login_required
 def IndexView(request):
@@ -88,6 +89,15 @@ import io
 import urllib, base64
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 
+
+
+def plot_to_base64(plt):
+    buffer = io.BytesIO()
+    plt.savefig(buffer, format='png')
+    buffer.seek(0)
+    b64 = base64.b64encode(buffer.read()).decode('utf-8')
+    return b64
+
 def data_description(request):
     """
     get data info, data description, data visualization
@@ -146,7 +156,7 @@ def data_description(request):
         'total_rows': df.shape[0],
         'missing_values': df.isnull().sum().sum(),
         'no_of_districts': no_of_districts,
-        'sample_data': sample_data.to_html(classes='table table-striped table-hover'),
+        'sample_data': sample_data.to_html(classes='table table-striped table-bordered'),
         # last_updated converted to datetime
         'last_updated': pd.to_datetime(df['updated_on']).max(),
 
@@ -285,6 +295,9 @@ def clean_data(request, *args, **kwargs):
     # save the cleaned data to the ProcessedCrimeData model
     from .models import ProcessedCrimeData
 
+    crimes = ProcessedCrimeData.objects.all()
+    crimes.delete()
+
     for index, row in crimes_data.iterrows():
         crime = ProcessedCrimeData(
             date = row['date'],
@@ -323,15 +336,169 @@ def clean_data(request, *args, **kwargs):
     return render(request, 'preprocessing.html', context)
 
 def data_analytics(request, *args, **kwargs):
-    cleaned_dataset = ProcessedCrimeData.objects.all()
+    crimes_data = ProcessedCrimeData.objects.all()
+    sample_dataset = crimes_data[:10]
 
-    sample_dataset = cleaned_dataset[:10]
+
+    # convert to dataframe
+    crimes_data_df = pd.DataFrame(list(crimes_data.values()))
+
+    # 1. Crimes per day of the week
+    fig, ax = plt.subplots(figsize=(9, 6))
+    crimes_data_df.groupby('day_of_week').size().plot(kind='bar', ax=ax)
+    ax.set_title('Crimes per day of the week')
+    ax.set_xlabel('Day of the week')
+    ax.set_ylabel('Number of crimes')
+    crimes_per_day_b64 = plot_to_base64(plt)
+
+    # 2. Crimes per month
+    fig, ax = plt.subplots(figsize=(9, 6))
+    sns.countplot(data=crimes_data_df,x='month',hue='year',order=crimes_data_df.month.value_counts().index,palette='Set2')
+    ax.set_title('Crimes per month')
+    ax.set_xlabel('Month')
+    ax.set_ylabel('Number of crimes')
+    crimes_per_month_b64 = plot_to_base64(plt)
+
+    # 3. Arrests per month
+    fig, ax = plt.subplots(figsize=(9, 6))
+    sns.pointplot(data=crimes_data_df,x='month',y='arrest',hue='year',order=crimes_data_df.month.value_counts().index,palette='Set2')
+    ax.set_title('Arrests per month')
+    ax.set_xlabel('Arrest')
+    ax.set_ylabel('Month')
+    arrests_per_month_b64 = plot_to_base64(plt)
+
+    fig, ax = plt.subplots(figsize=(9, 6))
+    sns.countplot(data=crimes_data_df,x='zone',hue='year',order=crimes_data_df.zone.value_counts().index,palette='Set2')
+    ax.set_title('Crimes per zone')
+    ax.set_xlabel('Zone')
+    ax.set_ylabel('Number of crimes')
+    crimes_per_zone_b64 = plot_to_base64(plt)
+
+    fig, ax = plt.subplots(figsize=(9, 6))
+    sns.countplot(data=crimes_data_df,x='season',hue='year',palette='Set2')
+    ax.set_title('Crimes per season')
+    ax.set_xlabel('Season')
+    ax.set_ylabel('Number of crimes')
+    crimes_per_season_b64 = plot_to_base64(plt)
+
+    fig, ax = plt.subplots(figsize=(9, 6))
+    sns.countplot(data=crimes_data_df,x='year',hue='arrest',palette='Set2')
+    ax.set_title('Arrests per year')
+    ax.set_xlabel('Year')
+    ax.set_ylabel('Number of arrests')
+    arrests_per_year_b64 = plot_to_base64(plt)
+
+    fig, ax = plt.subplots(figsize=(9, 6))
+    plt.pie(crimes_data_df.primary_type_grouped.value_counts(),labels=crimes_data_df.primary_type_grouped.value_counts().index,autopct='%1.1f%%',shadow=True,radius=2.5)
+    ax.set_title('Crimes per type')
+    ax.set_xlabel('Type')
+    ax.set_ylabel('Number of crimes')
+    plt.legend(loc = 'best')
+    crimes_per_type_pie = plot_to_base64(plt)
+
+    fig, ax = plt.subplots(figsize=(9, 6))
+    plt.pie(crimes_data_df.loc_grouped.value_counts(),labels=crimes_data_df.loc_grouped.value_counts().index,autopct='%1.1f%%',shadow=True,radius=2.5)
+    plt.legend(loc = 'best')
+    ax.set_title('Crimes per location')
+    ax.set_xlabel('Location')
+    ax.set_ylabel('Number of crimes')
+    crimes_per_loc_pie = plot_to_base64(plt)
+
+    fig, ax = plt.subplots(figsize=(9, 6))
+    sns.countplot(data=crimes_data_df,x='day_of_week',order=crimes_data_df.day_of_week.value_counts().index,palette='Set2')
+    ax.set_title('Crimes per day of the week')
+    ax.set_xlabel('Day of the week')
+    ax.set_ylabel('Number of crimes')
+    complete_crimes_per_day_b64 = plot_to_base64(plt)
+
+    fig, ax = plt.subplots(figsize=(9, 6))
+    sns.countplot(data=crimes_data_df,x='month',order=crimes_data_df.month.value_counts().index,palette='Set2')
+    ax.set_title('Crimes per month')
+    ax.set_xlabel('Month')
+    ax.set_ylabel('Number of crimes')
+    complete_crimes_per_month_b64 = plot_to_base64(plt)
+
+    fig, ax = plt.subplots(figsize=(9, 6))
+    sns.pointplot(data=crimes_data_df,x=crimes_data_df.time.value_counts().index,y=crimes_data_df.time.value_counts())
+    ax.set_title('Crimes per time')
+    ax.set_xlabel('Time')
+    ax.set_ylabel('Number of crimes')
+    complete_crimes_per_time_b64 = plot_to_base64(plt)
+
+    fig, ax = plt.subplots(figsize=(9, 6))
+    sns.countplot(data=crimes_data_df,x='zone',order=crimes_data_df.zone.value_counts().index,palette='Set2')
+    ax.set_title('Crimes per zone')
+    ax.set_xlabel('Zone')
+    ax.set_ylabel('Number of crimes')
+    complete_crimes_per_zone_b64 = plot_to_base64(plt)
+
+    fig, ax = plt.subplots(figsize=(9, 6))
+    sns.countplot(data=crimes_data_df,x='season',order=crimes_data_df.season.value_counts().index,palette='Set2')
+    ax.set_title('Crimes per season')
+    ax.set_xlabel('Season')
+    ax.set_ylabel('Number of crimes')
+    complete_crimes_per_season_b64 = plot_to_base64(plt)
+
+    fig, ax = plt.subplots(figsize=(9, 6))
+    sns.countplot(data=crimes_data_df,x='arrest',hue='primary_type_grouped',palette='Set2')
+    ax.set_title('Arrests per crime type')
+    ax.set_xlabel('Arrest')
+    ax.set_ylabel('Number of arrests')
+    plt.legend(loc = 'best')
+    complete_arrests_per_crime_type_b64 = plot_to_base64(plt)
+
+    fig, ax = plt.subplots(figsize=(9, 6))
+    sns.barplot(data=crimes_data_df,x=crimes_data_df.location_description.value_counts()[0:20].index,y=crimes_data_df.location_description.value_counts()[0:20].values,palette='Set2')
+    ax.set_title('Crimes per location')
+    ax.set_xlabel('Location')
+    ax.set_ylabel('Number of crimes')
+    plt.xticks(rotation=45)
+    complete_crimes_per_location_b64 = plot_to_base64(plt)
+
+    fig, ax = plt.subplots(figsize=(9, 6))
+    new_crimes_data_df = crimes_data_df.loc[(crimes_data_df['x_coordinate'] > 0) & (crimes_data_df['y_coordinate'] > 0)]
+    sns.lmplot(x='x_coordinate',
+            y='y_coordinate',
+            data=new_crimes_data_df,
+            fit_reg=False,
+            hue='primary_type_grouped',
+            scatter_kws={"marker": "D", 
+                            "s": 20})
+    ax = plt.gca()
+    ax.set_title('Chicago Crime Map')
+    ax.set_xlabel('X Coordinate')
+    ax.set_ylabel('Y Coordinate')
+    plt.legend(loc = 'best')
+    complete_crimes_map_b64 = plot_to_base64(plt)
+
 
     context = {
         'sample_dataset': sample_dataset,
-        'total_crimes': cleaned_dataset.count(),
+        'total_crimes': crimes_data.count(),
+        'crimes_data_df': crimes_data_df,
+        'crimes_per_day_b64': crimes_per_day_b64,
+        'crimes_per_month_b64': crimes_per_month_b64,
+        'arrests_per_month_b64': arrests_per_month_b64,
+        'crimes_per_zone_b64': crimes_per_zone_b64,
+        'crimes_per_season_b64': crimes_per_season_b64,
+        'arrests_per_year_b64': arrests_per_year_b64,
+        'crimes_per_type_pie': crimes_per_type_pie,
+        'crimes_per_loc_pie': crimes_per_loc_pie,
+        'complete_crimes_per_day_b64': complete_crimes_per_day_b64,
+        'complete_crimes_per_month_b64': complete_crimes_per_month_b64,
+        'complete_crimes_per_time_b64': complete_crimes_per_time_b64,
+        'complete_crimes_per_zone_b64': complete_crimes_per_zone_b64,
+        'complete_crimes_per_season_b64': complete_crimes_per_season_b64,
+        'complete_arrests_per_crime_type_b64': complete_arrests_per_crime_type_b64,
+        'complete_crimes_per_location_b64': complete_crimes_per_location_b64,
+        'complete_crimes_map_b64': complete_crimes_map_b64,
+
 
     }
 
     return render(request, 'data_analytics.html', context)
 
+
+def verify_cleaning(request, *args, **kwargs):
+    if request.method == 'POST':
+        return HttpResponseRedirect(redirect('core:preprocess-data'))
