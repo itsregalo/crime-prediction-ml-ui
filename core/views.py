@@ -84,6 +84,10 @@ from scipy.cluster.hierarchy import linkage, dendrogram, fcluster
 from sklearn.cluster import KMeans, DBSCAN
 sns.set_style("darkgrid")
 
+import io
+import urllib, base64
+from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+
 def data_description(request):
     """
     get data info, data description, data visualization
@@ -106,11 +110,33 @@ def data_description(request):
 
     df.drop(['case_number','location'],axis=1,inplace=True)
 
-    msno_heatmap = msno.heatmap(df,figsize=(15, 5))
-    print(msno_heatmap)
+    # generate the plots
+    fig = plt.figure(figsize=(15, 5))
+    msno.heatmap(df, ax=fig.add_subplot(121))
+    msno.dendrogram(df, ax=fig.add_subplot(122))
+    
+    # convert the plots to base64 encoded strings
+    canvas = FigureCanvas(fig)
+    msno_heatmap_png_output = io.BytesIO()
+    canvas.print_png(msno_heatmap_png_output)
+    msno_heatmap_png_output.seek(0)
+    msno_heatmap_png_base64 = base64.b64encode(msno_heatmap_png_output.getvalue()).decode('utf-8').replace('\n', '')
+    heatmap_image = "data:image/png;base64,{}".format(msno_heatmap_png_base64)
 
-    # dendrogram
-    msno_dendrogram = msno.dendrogram(df,figsize=(15, 5))
+    canvas = FigureCanvas(fig)
+    msno_dendrogram_png_output = io.BytesIO()
+    canvas.print_png(msno_dendrogram_png_output)
+    msno_dendrogram_png_output.seek(0)
+    msno_dendrogram_png_base64 = base64.b64encode(msno_dendrogram_png_output.getvalue()).decode('utf-8').replace('\n', '')
+    dendrogram_image = "data:image/png;base64,{}".format(msno_dendrogram_png_base64)
+
+
+    """
+    html context to display the plots in html
+
+    <img src="{{ msno_heatmap }}" alt="msno_heatmap">
+    """
+
     
     
     # to display the plots in h
@@ -125,7 +151,7 @@ def data_description(request):
         'last_updated': pd.to_datetime(df['updated_on']).max(),
 
         # plots to display in html
-        'msno_heatmap': msno_heatmap,
-        'msno_dendrogram': msno_dendrogram,
+        'msno_heatmap': heatmap_image,
+        'msno_dendrogram': dendrogram_image,
     }
     return render(request, 'data_description.html', context)
