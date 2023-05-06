@@ -22,9 +22,11 @@ import os
 def IndexView(request):
     data_count = Crime.objects.count()
     latest_crimes = Crime.objects.order_by('-date')[:15]
+    latest_training_plot = latest_predictions_plots.objects.latest('timestamp')
     context = {
         'data_count': data_count,
         'latest_crimes': latest_crimes,
+        'latest_training_plot': latest_training_plot,
     }
     return render(request, 'index.html', context)
 
