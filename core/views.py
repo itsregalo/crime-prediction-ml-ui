@@ -656,6 +656,7 @@ def train_model(request, *args, **kwargs):
         model_confusion_matrix=conf_matrix,
         training_data_size=len(X_train),
         test_data_size=len(X_test),
+        model_confusion_matrix_plot=crime_type_model_confusion_matrix_b64_2,
         )
         crime_type_latest_stats.save()
     except:
