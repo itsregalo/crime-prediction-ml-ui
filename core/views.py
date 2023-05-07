@@ -32,6 +32,24 @@ def IndexView(request):
     }
     return render(request, 'index.html', context)
 
+
+def processed_data(request):
+    processed_data = ProcessedCrimeData.objects.all()
+    paginator = Paginator(processed_data, 100)
+    page = request.GET.get('page')
+    try:
+        processed_data = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        processed_data = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        processed_data = paginator.page(paginator.num_pages)
+    context = {
+        'processed_data': processed_data,
+    }
+    return render(request, 'processed_data.html', context)
+
 def DataTableView(request):
     crimes = Crime.objects.all()
     paginator = Paginator(crimes, 100)
