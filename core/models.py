@@ -116,6 +116,8 @@ class latest_model_statistics(models.Model):
     model_f1_score = models.FloatField()
     model_confusion_matrix = models.CharField(max_length=1000)
     model_classification_report = models.CharField(max_length=1000)
+    training_data_size = models.IntegerField(default=0)
+    test_data_size = models.IntegerField(default=0)
     timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -144,6 +146,8 @@ class crime_type_model_statistics(models.Model):
     model_f1_score = models.FloatField()
     model_confusion_matrix = models.CharField(max_length=1000)
     model_classification_report = models.CharField(max_length=1000)
+    training_data_size = models.IntegerField(default=0)
+    test_data_size = models.IntegerField(default=0)
     timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

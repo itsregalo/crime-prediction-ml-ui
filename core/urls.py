@@ -12,4 +12,5 @@ urlpatterns = [
     path('import-data/', import_data, name='import-data'),
     path('data-analytics/', data_analytics, name='data-analytics'),
     path('train-model/', train_model, name='train-model'),
+    path('nerd-stats/', nerd_statistics, name='nerd-stats'),
 ]

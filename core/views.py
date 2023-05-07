@@ -21,12 +21,14 @@ import os
 @login_required
 def IndexView(request):
     data_count = Crime.objects.count()
+    cleaned_crimes = ProcessedCrimeData.objects.all()
     latest_crimes = Crime.objects.order_by('-date')[:15]
     latest_training_plot = latest_predictions_plots.objects.latest('timestamp')
     context = {
         'data_count': data_count,
         'latest_crimes': latest_crimes,
         'latest_training_plot': latest_training_plot,
+        'cleaned_crimes_count': cleaned_crimes.count(),
     }
     return render(request, 'index.html', context)
 
@@ -598,6 +600,8 @@ def train_model(request, *args, **kwargs):
     model_f1_score=f1_score,
     model_classification_report=classification_report,
     model_confusion_matrix=conf_matrix,
+    training_data_size=len(X_train),
+    test_data_size=len(X_test),
     )
     latest_stats.save()
 
@@ -649,6 +653,8 @@ def train_model(request, *args, **kwargs):
         model_f1_score=f1_score,
         model_classification_report=classification_report,
         model_confusion_matrix=conf_matrix,
+        training_data_size=len(X_train),
+        test_data_size=len(X_test),
         )
         crime_type_latest_stats.save()
     except:
@@ -782,5 +788,13 @@ def train_model(request, *args, **kwargs):
     return HttpResponseRedirect(reverse('core:index'))
             
 
+def nerd_statistics(request):
+    latest_models_stats = latest_model_statistics.objects.all().order_by('-id')[0]
+    crime_type_model_stats = crime_type_model_statistics.objects.all().order_by('-id')[0]
 
+    context = {
+        'latest_models_stats': latest_models_stats,
+        'crime_type_model_stats': crime_type_model_stats
+    }
 
+    return render(request, 'nerd_statistics.html', context)
