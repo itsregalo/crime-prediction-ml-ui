@@ -602,6 +602,7 @@ def train_model(request, *args, **kwargs):
     model_confusion_matrix=conf_matrix,
     training_data_size=len(X_train),
     test_data_size=len(X_test),
+    model_confusion_matrix_plot=model_confusion_matrix_b64,
     )
     latest_stats.save()
 

@@ -43,24 +43,10 @@
                     <div class="card-body">
                         <div class="d-flex align-items-center">
                             <div>
-                                <p class="mb-0">Total Users</p>
-                                <h5 class="mb-0">85,028</h5>
+                                <p class="mb-0">Training Dataset</p>
+                                <h5 class="mb-0">{{ latest_models_stats.training_data_size }}</h5>
                             </div>
-                            <div class="dropdown ms-auto">
-                                <div class="dropdown-toggle dropdown-toggle-nocaret cursor-pointer" data-bs-toggle="dropdown">	<i class='bx bx-dots-horizontal-rounded font-22'></i>
-                                </div>
-                                <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="javascript:;">Action</a>
-                                    </li>
-                                    <li><a class="dropdown-item" href="javascript:;">Another action</a>
-                                    </li>
-                                    <li>
-                                        <hr class="dropdown-divider">
-                                    </li>
-                                    <li><a class="dropdown-item" href="javascript:;">Something else here</a>
-                                    </li>
-                                </ul>
-                            </div>
+                            
                         </div>
                         <div class="" id="w-chart1"></div>
                     </div>
@@ -71,24 +57,10 @@
                     <div class="card-body">
                         <div class="d-flex align-items-center">
                             <div>
-                                <p class="mb-0">Page Views</p>
-                                <h5 class="mb-0">42,892</h5>
+                                <p class="mb-0">Testing Dataset</p>
+                                <h5 class="mb-0">{{ latest_models_stats.test_data_size }}</h5>
                             </div>
-                            <div class="dropdown ms-auto">
-                                <div class="dropdown-toggle dropdown-toggle-nocaret cursor-pointer" data-bs-toggle="dropdown">	<i class='bx bx-dots-horizontal-rounded font-22'></i>
-                                </div>
-                                <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="javascript:;">Action</a>
-                                    </li>
-                                    <li><a class="dropdown-item" href="javascript:;">Another action</a>
-                                    </li>
-                                    <li>
-                                        <hr class="dropdown-divider">
-                                    </li>
-                                    <li><a class="dropdown-item" href="javascript:;">Something else here</a>
-                                    </li>
-                                </ul>
-                            </div>
+                            
                         </div>
                         <div class="" id="w-chart2"></div>
                     </div>
@@ -99,24 +71,10 @@
                     <div class="card-body">
                         <div class="d-flex align-items-center">
                             <div>
-                                <p class="mb-0">Avg. Session Duration</p>
-                                <h5 class="mb-0">00:03:20</h5>
+                                <p class="mb-0">Last Trained</p>
+                                <h5 class="mb-0">{{ latest_models_stats.timestamp | date:"d M Y" }}</h5>
                             </div>
-                            <div class="dropdown ms-auto">
-                                <div class="dropdown-toggle dropdown-toggle-nocaret cursor-pointer" data-bs-toggle="dropdown">	<i class='bx bx-dots-horizontal-rounded font-22'></i>
-                                </div>
-                                <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="javascript:;">Action</a>
-                                    </li>
-                                    <li><a class="dropdown-item" href="javascript:;">Another action</a>
-                                    </li>
-                                    <li>
-                                        <hr class="dropdown-divider">
-                                    </li>
-                                    <li><a class="dropdown-item" href="javascript:;">Something else here</a>
-                                    </li>
-                                </ul>
-                            </div>
+                            
                         </div>
                         <div class="" id="w-chart3"></div>
                     </div>
@@ -127,24 +85,10 @@
                     <div class="card-body">
                         <div class="d-flex align-items-center">
                             <div>
-                                <p class="mb-0">Bounce Rate</p>
-                                <h5 class="mb-0">51.46%</h5>
+                                <p class="mb-0">Accuracy</p>
+                                <h5 class="mb-0">{{latest_models_stats.model_accuracy}}</h5>
                             </div>
-                            <div class="dropdown ms-auto">
-                                <div class="dropdown-toggle dropdown-toggle-nocaret cursor-pointer" data-bs-toggle="dropdown">	<i class='bx bx-dots-horizontal-rounded font-22'></i>
-                                </div>
-                                <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="javascript:;">Action</a>
-                                    </li>
-                                    <li><a class="dropdown-item" href="javascript:;">Another action</a>
-                                    </li>
-                                    <li>
-                                        <hr class="dropdown-divider">
-                                    </li>
-                                    <li><a class="dropdown-item" href="javascript:;">Something else here</a>
-                                    </li>
-                                </ul>
-                            </div>
+                            
                         </div>
                         <div class="" id="w-chart4"></div>
                     </div>
@@ -155,8 +99,8 @@
                     <div class="card-body">
                         <div class="d-flex align-items-center">
                             <div>
-                                <p class="mb-0">Total Orders</p>
-                                <h5 class="mb-0">867</h5>
+                                <p class="mb-0">Precision</p>
+                                <h5 class="mb-0">{{latest_models_stats.model_precision}}</h5>
                             </div>
                             <div class="ms-auto">	<i class='bx bx-cart font-30'></i>
                             </div>
@@ -170,8 +114,8 @@
                     <div class="card-body">
                         <div class="d-flex align-items-center">
                             <div>
-                                <p class="mb-0">Total Income</p>
-                                <h5 class="mb-0">$52,945</h5>
+                                <p class="mb-0">Recall</p>
+                                <h5 class="mb-0">{{latest_models_stats.model_recall}}</h5>
                             </div>
                             <div class="ms-auto">	<i class='bx bx-wallet font-30'></i>
                             </div>
@@ -185,8 +129,8 @@
                     <div class="card-body">
                         <div class="d-flex align-items-center">
                             <div>
-                                <p class="mb-0">Total Users</p>
-                                <h5 class="mb-0">24.5K</h5>
+                                <p class="mb-0">Error</p>
+                                <h5 class="mb-0">{{ latest_models_stats.model_error }}</h5>
                             </div>
                             <div class="ms-auto">	<i class='bx bx-bulb font-30'></i>
                             </div>
@@ -200,8 +144,8 @@
                     <div class="card-body">
                         <div class="d-flex align-items-center">
                             <div>
-                                <p class="mb-0">Comments</p>
-                                <h5 class="mb-0">869</h5>
+                                <p class="mb-0">F1 Score</p>
+                                <h5 class="mb-0">{{latest_models_stats.model_f1_score}}</h5>
                             </div>
                             <div class="ms-auto">	<i class='bx bx-chat font-30'></i>
                             </div>
@@ -215,8 +159,8 @@
                     <div class="card-body">
                         <div class="d-flex align-items-center">
                             <div>
-                                <p class="mb-0">Total Orders</p>
-                                <h5 class="mb-0">867</h5>
+                                <p class="mb-0">Confussion Matrix</p>
+                                <h5 class="mb-0">{{latest_models_stats.model_confusion_matrix}}</h5>
                             </div>
                             <div class="ms-auto">	<i class='bx bx-cart font-30'></i>
                             </div>
@@ -227,57 +171,8 @@
                     </div>
                 </div>
             </div>
-            <div class="col">
-                <div class="card radius-10 overflow-hidden">
-                    <div class="card-body">
-                        <div class="d-flex align-items-center">
-                            <div>
-                                <p class="mb-0">Total Income</p>
-                                <h5 class="mb-0">$52,945</h5>
-                            </div>
-                            <div class="ms-auto">	<i class='bx bx-wallet font-30'></i>
-                            </div>
-                        </div>
-                        <div class="progress radius-10 mt-4" style="height:4.5px;">
-                            <div class="progress-bar bg-danger" role="progressbar" style="width: 72%"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="card radius-10 overflow-hidden">
-                    <div class="card-body">
-                        <div class="d-flex align-items-center">
-                            <div>
-                                <p class="mb-0">Total Users</p>
-                                <h5 class="mb-0">24.5K</h5>
-                            </div>
-                            <div class="ms-auto">	<i class='bx bx-bulb font-30'></i>
-                            </div>
-                        </div>
-                        <div class="progress radius-10 mt-4" style="height:4.5px;">
-                            <div class="progress-bar bg-success" role="progressbar" style="width: 68%"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="card radius-10 overflow-hidden">
-                    <div class="card-body">
-                        <div class="d-flex align-items-center">
-                            <div>
-                                <p class="mb-0">Comments</p>
-                                <h5 class="mb-0">869</h5>
-                            </div>
-                            <div class="ms-auto">	<i class='bx bx-chat font-30'></i>
-                            </div>
-                        </div>
-                        <div class="progress radius-10 mt-4" style="height:4.5px;">
-                            <div class="progress-bar bg-info" role="progressbar" style="width: 66%"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            
+            
         </div>
         <!--end row-->
         

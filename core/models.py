@@ -118,6 +118,7 @@ class latest_model_statistics(models.Model):
     model_classification_report = models.CharField(max_length=1000)
     training_data_size = models.IntegerField(default=0)
     test_data_size = models.IntegerField(default=0)
+    model_confusion_matrix_plot = models.CharField(max_length=1000, blank=True, null=True)
     timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -148,6 +149,7 @@ class crime_type_model_statistics(models.Model):
     model_classification_report = models.CharField(max_length=1000)
     training_data_size = models.IntegerField(default=0)
     test_data_size = models.IntegerField(default=0)
+    model_confusion_matrix_plot = models.CharField(max_length=1000, blank=True, null=True)
     timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
