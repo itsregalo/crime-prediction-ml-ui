@@ -95,41 +95,47 @@
         <div class="row">
             <div class="col-sm-12 col-md-5">
                 <div class="dataTables_info" id="example_info" role="status" aria-live="polite">
-                    Showing 1 to 10 of 57 entries
+                    Showing {{ processed_data.start_index }} to {{ processed_data.end_index }} of {{ processed_data.paginator.count }} entries
                 </div>
             </div>
             <div class="col-sm-12 col-md-7">
-                {% if processed_data.has_other_pages %}
-                    <nav aria-label="...">
-                        <ul class="pagination">
-                            {% if processed_data.has_previous %}
-                            <li class="page-item">
-                                <a class="page-link" href="?page={{ processed_data.previous_page_number }}" tabindex="-1" aria-label="Previous">
-                                    <span aria-hidden="true">&laquo;</span>
-                                    <span class="sr-only">Previous</span>
-                                </a>
+                <div class="dataTables_paginate paging_simple_numbers" id="example_paginate">
+                    <ul class="pagination">
+                        {% if processed_data.has_previous %}
+                            <li class="paginate_button page-item previous">
+                                <a href="?page={{ processed_data.previous_page_number }}" aria-controls="example" tabindex="0" class="page-link">Prev</a>
                             </li>
-                            {% endif %}
-                            {% for i in processed_data.paginator.page_range %}
-                            {% if processed_data.number == i %}
-                            <li class="page-item active"><a class="page-link" href="#">{{ i }} <span class="sr-only">(current)</span></a></li>
-                            {% else %}
-                            <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
-                            {% endif %}
-                            {% endfor %}
-                            {% if processed_data.has_next %}
-                            <li class="page-item">
-                                <a class="page-link" href="?page={{ processed_data.next_page_number }}" aria-label="Next">
-                                    <span aria-hidden="true">&raquo;</span>
-                                    <span class="sr-only">Next</span>
-                                </a>
+                        {% else %}
+                            <li class="paginate_button page-item previous disabled">
+                                <span class="page-link">Prev</span>
                             </li>
-                            {% endif %}
-                        </ul>
-                    </nav>
+                        {% endif %}
+
+                        {% for num in processed_data.paginator.page_range %}
+                        {% if processed_data.number == num %}
+                            <li class="paginate_button page-item active">
+                                <span class="page-link">{{ num }}</span>
+                            </li>
+                        {% elif num > processed_data.number|add:'-3' and num < processed_data.number|add:'3' %}
+                            <li class="paginate_button page-item">
+                                <a href="?page={{ num }}" aria-controls="example" tabindex="0" class="page-link">{{ num }}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+       
+                    {% if processed_data.has_next %}
+                        <li class="paginate_button page-item next">
+                            <a href="?page={{ processed_data.next_page_number }}" aria-controls="example" tabindex="0" class="page-link">Next</a>
+                        </li>
+                    {% else %}
+                        <li class="paginate_button page-item next disabled">
+                            <span class="page-link">Next</span>
+                        </li>
                     {% endif %}
+                </ul>
             </div>
         </div>
+    </div>
         
     </div>
 </div>
