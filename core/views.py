@@ -787,7 +787,7 @@ def train_model(request, *args, **kwargs):
     except:
         pass
 
-    return HttpResponseRedirect(reverse('core:index'))
+    return HttpResponseRedirect(reverse('core:nerd-stats'))
             
 
 def nerd_statistics(request):
