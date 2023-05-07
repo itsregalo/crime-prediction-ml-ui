@@ -17,6 +17,32 @@ from django.conf import settings
 import pickle
 import os
 
+# count
+from django.db.models import Count
+
+#Importing all necessary libraries
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import missingno as msno 
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.naive_bayes import GaussianNB
+from sklearn import tree
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn import metrics
+from sklearn.metrics import classification_report
+from sklearn import preprocessing
+from scipy.cluster.hierarchy import linkage, dendrogram, fcluster
+from sklearn.cluster import KMeans, DBSCAN
+sns.set_style("darkgrid")
+
+import io
+import urllib, base64
+from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+
 
 @login_required
 def IndexView(request):
@@ -24,11 +50,56 @@ def IndexView(request):
     cleaned_crimes = ProcessedCrimeData.objects.all()
     latest_crimes = Crime.objects.order_by('-date')[:15]
     latest_training_plot = latest_predictions_plots.objects.latest('timestamp')
+
+    common_crime_types = ProcessedCrimeData.objects.values('primary_type').distinct().order_by('primary_type')
+
+    # table with crime type and count of each crime type
+    crime_type_count = ProcessedCrimeData.objects.values('primary_type').distinct().order_by('primary_type').annotate(count=Count('primary_type'))
+    print(crime_type_count)
+
+    labels = []
+    values = []
+    for crime in crime_type_count:
+        labels.append(crime['primary_type'])
+        values.append(crime['count'])
+
+    # bar chart for crime type and count of each crime type
+    fig = plt.figure(figsize=(10, 5))
+    plt.bar(labels, values, color='blue')
+    plt.xticks(rotation=90)
+    plt.xlabel('Crime Type')
+    plt.ylabel('Count')
+    plt.title('Crime Type and Count')
+    plt.tight_layout()
+    crime_type_count_plot = plot_to_base64(fig)
+
+    # districts and count of each district
+    district_count = ProcessedCrimeData.objects.values('zone').distinct().order_by('zone').annotate(count=Count('zone'))
+
+    # pie chart for district and count of each district, top 5
+    labels = []
+    values = []
+    for district in district_count:
+        labels.append(district['zone'])
+        values.append(district['count'])
+
+    fig = plt.figure(figsize=(5, 5))
+    plt.pie(values, labels=labels, autopct='%1.1f%%', shadow=True, startangle=90)
+    plt.title('Zone and Count')
+    plt.tight_layout()
+    zone_count_plot = plot_to_base64(fig)
+
+
+
+
     context = {
         'data_count': data_count,
         'latest_crimes': latest_crimes,
         'latest_training_plot': latest_training_plot,
         'cleaned_crimes_count': cleaned_crimes.count(),
+        'common_crime_types': common_crime_types,
+        'crime_type_count_plot': crime_type_count_plot,
+        'zone_count_plot': zone_count_plot,
     }
     return render(request, 'index.html', context)
 
@@ -94,28 +165,7 @@ def import_data(request):
 
     return render(request, 'import_data.html')
 
-#Importing all necessary libraries
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
-import missingno as msno 
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
-from sklearn.naive_bayes import GaussianNB
-from sklearn import tree
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.linear_model import LogisticRegression
-from sklearn import metrics
-from sklearn.metrics import classification_report
-from sklearn import preprocessing
-from scipy.cluster.hierarchy import linkage, dendrogram, fcluster
-from sklearn.cluster import KMeans, DBSCAN
-sns.set_style("darkgrid")
 
-import io
-import urllib, base64
-from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 
 
 
@@ -173,9 +223,7 @@ def data_description(request):
     html context to display the plots in html
 
     <img src="{{ msno_heatmap }}" alt="msno_heatmap">
-    """
-
-    
+    """  
     
     # to display the plots in h
     context = {
@@ -818,3 +866,5 @@ def nerd_statistics(request):
     }
 
     return render(request, 'nerd_statistics.html', context)
+
+
