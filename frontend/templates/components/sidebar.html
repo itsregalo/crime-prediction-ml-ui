@@ -90,6 +90,18 @@
             
         </li>
 
+        
+        {% if request.user.is_superuser %}
+        <li>
+            <a class="has-arrow" href="/admin/" target="_blank">
+                <div class="parent-icon"><i class="bx bx-lock"></i>
+                </div>
+                <div class="menu-title">Admin</div>
+            </a>
+            
+        </li>
+        {% endif %}
+            
         <li class="menu-label">Advance</li>
 
         <li>
